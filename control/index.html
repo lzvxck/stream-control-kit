@@ -267,6 +267,10 @@
       color: #f44444;
       background: rgba(244,68,68,0.07);
     }
+    .mini-opt.is-dimmed {
+      opacity: 0.2;
+      pointer-events: none;
+    }
     .mini-letter { font-weight: 700; font-size: 10px; flex-shrink: 0; opacity: 0.6; }
     .mini-opt.is-correct .mini-letter,
     .mini-opt.is-locked  .mini-letter { opacity: 1; }
@@ -395,7 +399,7 @@
     </div>
 
     <div class="btn-group">
-      <button class="btn btn-gold" id="btn-trivia-reveal">✔ Reveal</button>
+      <button class="btn btn-gold" id="btn-trivia-reveal" disabled>✔ Reveal</button>
       <button class="btn btn-danger" id="btn-trivia-walkaway">🚶 Walk Away</button>
       <button class="btn btn-danger" id="btn-trivia-gameover">💀 Game Over</button>
     </div>
@@ -493,7 +497,7 @@
       <div class="summary-row"><span class="summary-key">Invitado</span><span class="summary-val" id="sum-guest">—</span></div>
       <div class="summary-row"><span class="summary-key">Duración</span><span class="summary-val" id="sum-duration">—</span></div>
       <div class="summary-row"><span class="summary-key">Preguntas respondidas</span><span class="summary-val" id="sum-trivia">—</span></div>
-      <div class="summary-row"><span class="summary-key">🌶️ distribuidos</span><span class="summary-val" id="sum-picantes">—</span></div>
+      <div class="summary-row"><span class="summary-key">🌶️ totales del invitado</span><span class="summary-val" id="sum-picantes">—</span></div>
       <div class="summary-row"><span class="summary-key">Alertas</span><span class="summary-val" id="sum-alerts">—</span></div>
     </div>
     <div id="summary-empty" style="font-size:11px;color:var(--muted);">Disponible al finalizar el show.</div>
@@ -516,10 +520,10 @@ var miniCorrect  = null;
 var miniLocked   = null;
 
 /* ── Contadores post-show ──────────────────────────────────────────── */
-var _showStartTime   = null;
-var _picantesAwarded = 0;
-var _triviaQAnswered = 0;
-var _alertCount      = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
+var _showStartTime    = null;
+var _playerPtsAtStart = 0;
+var _triviaQAnswered  = 0;
+var _alertCount       = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
 
 /* ── Helpers UI ────────────────────────────────────────────────────── */
 function setStatus(connected, msg) {
@@ -551,7 +555,7 @@ function setActivePlayer(name) {
 
 /* ── Mini trivia preview ───────────────────────────────────────────── */
 function triviaSetRevealed(revealed) {
-  document.getElementById('btn-trivia-reveal').disabled = revealed;
+  if (revealed) document.getElementById('btn-trivia-reveal').disabled = true;
   ['A','B','C','D'].forEach(function (l) {
     var el = document.getElementById('mini-' + l);
     if (el) el.style.pointerEvents = revealed ? 'none' : '';
@@ -562,11 +566,14 @@ function triviaShowMini(payload) {
   miniCorrect = payload.correct || null;
   miniLocked  = null;
   triviaSetRevealed(false);
+  document.getElementById('btn-trivia-reveal').disabled = true;
   document.getElementById('mini-question').textContent = payload.question || '';
   ['A','B','C','D'].forEach(function (l) {
     var el = document.getElementById('mini-' + l);
     el.querySelector('.mini-text').textContent = (payload.options && payload.options[l]) || '';
     el.className = 'mini-opt' + (l === miniCorrect ? ' is-correct' : '');
+    var lockBtn = document.querySelector('.lock-btns [data-letter="' + l + '"]');
+    if (lockBtn) lockBtn.disabled = false;
   });
   document.getElementById('trivia-mini').style.display = 'block';
 }
@@ -579,8 +586,10 @@ function triviaLockMini(letter) {
     var cls = 'mini-opt';
     if (l === miniCorrect) cls += ' is-correct';
     if (l === miniLocked)  cls += ' is-locked';
+    if (el.classList.contains('is-dimmed')) cls += ' is-dimmed';
     el.className = cls;
   });
+  document.getElementById('btn-trivia-reveal').disabled = false;
 }
 
 function triviaRevealMini(payload) {
@@ -593,6 +602,16 @@ function triviaRevealMini(payload) {
     if (l === correct) cls += ' is-correct';
     else if (l === chosen && !payload.isCorrect) cls += ' is-wrong';
     el.className = cls;
+  });
+}
+
+function triviaFiftyFiftyMini(remove) {
+  (remove || []).forEach(function (l) {
+    var letter = l.toUpperCase();
+    var el = document.getElementById('mini-' + letter);
+    if (el) el.classList.add('is-dimmed');
+    var lockBtn = document.querySelector('.lock-btns [data-letter="' + letter + '"]');
+    if (lockBtn) lockBtn.disabled = true;
   });
 }
 
@@ -672,6 +691,9 @@ sb.on('General.Custom', function (msg) {
     case 'trivia.lock_answer':
       triviaLockMini(data.payload && data.payload.letter);
       break;
+    case 'trivia.lifeline.fifty_fifty':
+      if (data.payload && data.payload.remove) triviaFiftyFiftyMini(data.payload.remove);
+      break;
     case 'trivia.reveal_answer':
       if (data.payload) triviaRevealMini(data.payload);
       triviaSetRevealed(true);
@@ -680,11 +702,8 @@ sb.on('General.Custom', function (msg) {
       triviaHideMini();
       break;
     case 'picantes.quick_change':
-      if (data.payload) {
-        if (data.payload.delta > 0) _picantesAwarded += data.payload.delta;
-        if (activePlayer && data.payload.player === activePlayer) {
-          updatePtsDisplay(data.payload.total);
-        }
+      if (data.payload && activePlayer && data.payload.player === activePlayer) {
+        updatePtsDisplay(data.payload.total);
       }
       break;
     case 'picantes.leaderboard_update':
@@ -697,9 +716,6 @@ sb.on('General.Custom', function (msg) {
       break;
     case 'player.rank':
       if (data.payload) renderRankResult(data.payload);
-      break;
-    case 'show.summary':
-      showSummary(data.payload || {});
       break;
     case 'alert.follow':  _alertCount.follow++; break;
     case 'alert.sub':     _alertCount.sub++;    break;
@@ -724,10 +740,10 @@ document.getElementById('btn-set-player').onclick = function () {
   call('Show.SetActivePlayer', { player: val });
 };
 document.getElementById('btn-show-start').onclick = function () {
-  _showStartTime   = Date.now();
-  _picantesAwarded = 0;
-  _triviaQAnswered = 0;
-  _alertCount      = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
+  _showStartTime    = Date.now();
+  _playerPtsAtStart = currentPts;
+  _triviaQAnswered  = 0;
+  _alertCount       = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
   document.getElementById('summary-card').style.display = 'none';
   document.getElementById('summary-empty').style.display = 'block';
   call('Show.Start');
@@ -738,7 +754,7 @@ document.getElementById('btn-show-stop').onclick = function () {
     guest:           activePlayer,
     duration:        duration,
     triviaQuestions: _triviaQAnswered,
-    picantesAwarded: _picantesAwarded,
+    picantesAwarded: Math.max(0, currentPts - _playerPtsAtStart),
     alerts:          _alertCount,
   });
   call('Show.Stop');
@@ -890,12 +906,18 @@ document.getElementById('btn-scene-brb').onclick      = function () { call('Show
 document.getElementById('btn-discord-golive').onclick = function () { call('Infra.Discord.PostGoLive'); };
 
 /* Trivia */
-document.getElementById('btn-trivia-start').onclick    = function () { call('Trivia.Start', activePlayer ? { playerName: activePlayer } : {}); };
+document.getElementById('btn-trivia-start').onclick    = function () {
+  document.getElementById('btn-life-5050').disabled = false;
+  call('Trivia.Start', activePlayer ? { playerName: activePlayer } : {});
+};
 document.getElementById('btn-trivia-next').onclick     = function () { call('Trivia.NextQuestion'); };
 document.getElementById('btn-trivia-reveal').onclick   = function () { triviaSetRevealed(true); call('Trivia.RevealAnswer'); };
 document.getElementById('btn-trivia-walkaway').onclick = function () { call('Trivia.WalkAway'); };
 document.getElementById('btn-trivia-gameover').onclick = function () { call('Trivia.GameOver'); };
-document.getElementById('btn-life-5050').onclick    = function () { call('Trivia.Lifeline.FiftyFifty'); };
+document.getElementById('btn-life-5050').onclick    = function () {
+  this.disabled = true;
+  call('Trivia.Lifeline.FiftyFifty');
+};
 document.getElementById('btn-life-audience').onclick = function () { call('Trivia.Lifeline.AskAudience'); };
 document.getElementById('btn-life-phone').onclick    = function () { call('Trivia.Lifeline.PhoneFriend'); };
 
