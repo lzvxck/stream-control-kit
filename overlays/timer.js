@@ -54,13 +54,21 @@ function updateDisplay() {
   else if (remainingSeconds <= 15) wrap.className = 'warning';
 }
 
+/* ── Indicador de conexión ─────────────────────────────────────────── */
+var _wsDot = (function () {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#f55;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;';
+  document.body.appendChild(d);
+  return { ok: function () { d.style.opacity = '0'; }, fail: function () { d.style.opacity = '0.75'; } };
+})();
+
 var client = new StreamerbotClient({
   host: '127.0.0.1',
   port: 8080,
   password: null,
   autoSubscribe: { General: ['Custom'] },
-  onConnect: function () { console.log('[Timer] Conectado'); },
-  onDisconnect: function () { console.warn('[Timer] Desconectado'); }
+  onConnect: function () { _wsDot.ok(); },
+  onDisconnect: function () { _wsDot.fail(); },
 });
 
 client.on('General.Custom', function (msg) {

@@ -182,7 +182,32 @@ Esperado: mensaje aparece en el canal de Discord configurado.
 
 ---
 
-## 11. Checklist pre-stream
+## 11. Rank Tracker
+
+1. Abrir `C:\streams\spike-picante\overlays\rank-tracker.html` en OBS (browser source 320×200)
+2. Panel → Show Flow → escribir "Nick#TAG" en el campo de usuario Valorant → click **Track**
+
+Esperado:
+- Overlay aparece con el rank, RR, WR, KDA y últimas 8 partidas (pips verdes/rojos)
+- Panel muestra el resultado en el campo inferior al botón Track
+
+3. Click **Ocultar** → overlay desaparece.
+
+**Si falla:** La API de Henrik (`api.henrikdev.xyz`) es un servicio externo. Si devuelve error 429 (rate limit) o 404, verificar que el Riot ID es correcto (formato `Nick#TAG` con el tag regional correcto).
+
+---
+
+## 12. Post-show Summary
+
+1. Panel → `▶ Start Show` (resetea contadores)
+2. Ejecutar algunas acciones (Award puntos, lanzar alertas de test, iniciar trivia)
+3. Panel → `■ Stop Show`
+
+Esperado: sección "Resumen del show" muestra invitado, duración, preguntas respondidas, picantes distribuidos y conteo de alertas.
+
+---
+
+## 13. Checklist pre-stream
 
 - [ ] Dot verde en panel de control
 - [ ] WebSocket Server y HTTP Server activos en SB
@@ -192,6 +217,7 @@ Esperado: mensaje aparece en el canal de Discord configurado.
 - [ ] SFX en `C:\streams\spike-picante\assets\sfx\`
 - [ ] Hotkeys F13–F18 registrados en SB
 - [ ] Browser sources de Timer y Trivia con "Shutdown when not visible: OFF"
+- [ ] Browser source Rank Tracker agregada en OBS (320×200, local file)
 
 
 ---

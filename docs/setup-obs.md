@@ -20,6 +20,7 @@ Crear una **Browser Source** para cada overlay en las escenas correspondientes.
 | Alerts | `C:\streams\spike-picante\overlays\alerts.html` | 1920×1080 | Todas |
 | Wheel | `C:\streams\spike-picante\overlays\wheel.html` | 600×600 | Cuando se necesite |
 | Timer | `C:\streams\spike-picante\overlays\timer.html` | 200×200 | Cuando se necesite |
+| Rank Tracker | `C:\streams\spike-picante\overlays\rank-tracker.html` | 320×200 | Cuando se necesite |
 
 En OBS, al crear la Browser Source elegir **Local file** y navegar hasta el archivo. No es necesario el HTTP Server de SB para los overlays — solo necesitan el WebSocket Server (puerto 8080) para recibir eventos.
 

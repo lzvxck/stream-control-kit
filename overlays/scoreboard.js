@@ -55,6 +55,26 @@ function showQuickChange(payload) {
   }
 }
 
+function countUp(el, from, to, duration) {
+  if (el._countIv) cancelAnimationFrame(el._countIv);
+  var start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    var progress = Math.min((ts - start) / duration, 1);
+    // ease out quad
+    var eased = 1 - (1 - progress) * (1 - progress);
+    var value = Math.round(from + (to - from) * eased);
+    el.textContent = value.toLocaleString('es-ES');
+    if (progress < 1) {
+      el._countIv = requestAnimationFrame(step);
+    } else {
+      el.textContent = to.toLocaleString('es-ES');
+      el._countIv = null;
+    }
+  }
+  el._countIv = requestAnimationFrame(step);
+}
+
 function renderLeaderboard(players) {
   var list = document.getElementById('leaderboard');
 
@@ -65,8 +85,9 @@ function renderLeaderboard(players) {
   players.forEach(function (p) {
     var id = 'sb-' + p.name.replace(/[^a-z0-9]/gi, '_');
     var li = document.getElementById(id);
+    var isNew = !li;
 
-    if (!li) {
+    if (isNew) {
       li = document.createElement('li');
       li.id = id;
       li.className = 'sb-row';
@@ -74,13 +95,24 @@ function renderLeaderboard(players) {
 
     var tier = getTier(p.points);
     li.setAttribute('data-pos', p.position);
+
+    // Preserve existing pts element so we can read the current displayed value
+    var existingPtsEl = li.querySelector('.sb-pts');
+    var fromPts = existingPtsEl ? parseInt(existingPtsEl.textContent.replace(/\D/g, ''), 10) || 0 : 0;
+
     li.innerHTML =
       '<span class="sb-pos">#' + p.position + '</span>' +
       '<span class="sb-badge ' + tier.cls + '" title="' + tier.label + '"></span>' +
       '<span class="sb-name">' + escapeHtml(p.name) + '</span>' +
       '<span class="sb-pts">' + p.points.toLocaleString('es-ES') + '</span>';
 
-    list.appendChild(li); // mover al final para reflejar posición
+    list.appendChild(li);
+
+    // Animate counter only when value changed and row already existed
+    if (!isNew && fromPts !== p.points) {
+      var ptsEl = li.querySelector('.sb-pts');
+      countUp(ptsEl, fromPts, p.points, 700);
+    }
   });
 
   // Eliminar filas de jugadores que ya no están en el top
@@ -122,18 +154,22 @@ loadScript(GSAP_URL).then(function () {
   initClient();
 });
 
+/* ── Indicador de conexión (dot rojo solo cuando desconectado) ──────── */
+var _wsDot = (function () {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#f55;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;';
+  document.body.appendChild(d);
+  return { ok: function () { d.style.opacity = '0'; }, fail: function () { d.style.opacity = '0.75'; } };
+})();
+
 function initClient() {
   var client = new StreamerbotClient({
     host: '127.0.0.1',
     port: 8080,
     password: null,
     autoSubscribe: { General: ['Custom'] },
-    onConnect: function () {
-      console.log('[Scoreboard] Conectado a Streamer.bot');
-    },
-    onDisconnect: function () {
-      console.warn('[Scoreboard] Desconectado — reconectando...');
-    },
+    onConnect: function () { _wsDot.ok(); },
+    onDisconnect: function () { _wsDot.fail(); },
   });
 
   client.on('General.Custom', function (msg) {

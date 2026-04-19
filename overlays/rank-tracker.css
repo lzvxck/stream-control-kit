@@ -1,0 +1,144 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: transparent;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #ededed;
+}
+
+.hidden { display: none !important; }
+
+#rank-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 14px 16px;
+  backdrop-filter: blur(16px);
+  min-width: 280px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+#rank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#rank-tier-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#rank-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+#rank-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+#rank-rr {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+
+#rank-player {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  text-align: right;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Stats row */
+#rank-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-block {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  padding: 7px 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Recent matches */
+#rank-matches { display: flex; flex-direction: column; gap: 6px; }
+
+.match-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.3);
+}
+
+#match-row {
+  display: flex;
+  gap: 4px;
+}
+
+.match-pip {
+  width: 28px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+}
+
+.match-pip.win  { background: rgba(63,185,80,0.7); }
+.match-pip.loss { background: rgba(244,68,68,0.6); }
+.match-pip.draw { background: rgba(255,255,255,0.25); }
+
+/* Tier colors via data-tier attr */
+#rank-card[data-tier="Iron"]     #rank-icon { color: #9e9e9e; border-color: rgba(158,158,158,0.25); }
+#rank-card[data-tier="Bronze"]   #rank-icon { color: #cd7f32; border-color: rgba(205,127,50,0.25); }
+#rank-card[data-tier="Silver"]   #rank-icon { color: #c0c0c0; border-color: rgba(192,192,192,0.25); }
+#rank-card[data-tier="Gold"]     #rank-icon { color: #ffd700; border-color: rgba(255,215,0,0.25); }
+#rank-card[data-tier="Platinum"] #rank-icon { color: #40e0d0; border-color: rgba(64,224,208,0.25); }
+#rank-card[data-tier="Diamond"]  #rank-icon { color: #a259ff; border-color: rgba(162,89,255,0.25); }
+#rank-card[data-tier="Ascendant"] #rank-icon { color: #3fb950; border-color: rgba(63,185,80,0.25); }
+#rank-card[data-tier="Immortal"] #rank-icon { color: #ff4655; border-color: rgba(255,70,85,0.25); }
+#rank-card[data-tier="Radiant"]  #rank-icon { color: #ffe566; border-color: rgba(255,229,102,0.35); }

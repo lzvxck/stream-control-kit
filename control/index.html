@@ -191,6 +191,38 @@
     /* ── Full-width section ──────────────────────────────────────────── */
     .full-width { grid-column: 1 / -1; }
 
+    /* ── Rank tracker inline ──────────────────────────────────────────── */
+    #rank-result {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 5px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    #rank-result .rank-tier  { font-weight: 700; color: #fff; }
+    #rank-result .rank-stats { color: rgba(237,237,237,0.5); font-size: 11px; }
+    #rank-result .rank-pips  { display: flex; gap: 3px; margin-top: 4px; }
+    #rank-result .pip        { width: 18px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+    #rank-result .pip.win    { background: rgba(63,185,80,0.7); }
+    #rank-result .pip.loss   { background: rgba(244,68,68,0.6); }
+
+    /* ── Post-show summary ────────────────────────────────────────────── */
+    #summary-card { display: none; }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key  { color: var(--muted); }
+    .summary-val  { font-weight: 600; color: #fff; }
+
     /* ── Mini host preview (trivia card) ─────────────────────────────── */
     #trivia-mini { margin-bottom: 8px; display: none; }
     #mini-question {
@@ -230,6 +262,11 @@
       border-color: rgba(63,185,80,0.8);
       background: rgba(63,185,80,0.14);
     }
+    .mini-opt.is-wrong {
+      border-color: rgba(244,68,68,0.6);
+      color: #f44444;
+      background: rgba(244,68,68,0.07);
+    }
     .mini-letter { font-weight: 700; font-size: 10px; flex-shrink: 0; opacity: 0.6; }
     .mini-opt.is-correct .mini-letter,
     .mini-opt.is-locked  .mini-letter { opacity: 1; }
@@ -256,6 +293,35 @@
         <button class="btn btn-cyan" id="btn-set-player" style="white-space:nowrap">Setear</button>
       </div>
       <div id="active-player-display">— ninguno —</div>
+    </div>
+
+    <div class="field">
+      <label>Rank del invitado</label>
+      <div style="display:flex;gap:6px;margin-bottom:4px">
+        <input type="text" id="valorant-input" placeholder="Nick#TAG" style="flex:2">
+        <select id="rank-region-select" style="background:#000;border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:#ededed;font-size:12px;padding:5px 6px;cursor:pointer">
+          <option value="latam">LATAM</option>
+          <option value="na">NA</option>
+          <option value="eu">EU</option>
+          <option value="ap">AP</option>
+          <option value="br">BR</option>
+        </select>
+        <button class="btn btn-cyan" id="btn-track-rank" style="white-space:nowrap">Track</button>
+      </div>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="rank-manual-tier" placeholder="ej: Diamond 2" style="flex:2">
+        <input type="number" id="rank-manual-rr" placeholder="RR" min="0" max="100" style="flex:1">
+        <button class="btn btn-cyan" id="btn-rank-manual" style="white-space:nowrap">Mostrar</button>
+        <button class="btn" id="btn-rank-hide" style="white-space:nowrap">Ocultar</button>
+      </div>
+      <div id="rank-result">
+        <div><span class="rank-tier" id="ri-tier"></span> <span class="rank-stats" id="ri-rr"></span></div>
+        <div class="rank-pips" id="ri-pips"></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="password" id="henrik-key-input" placeholder="Henrik API key" style="font-size:10px;flex:1">
+        <button class="btn" id="btn-henrik-key-save" style="font-size:10px;white-space:nowrap">💾</button>
+      </div>
     </div>
 
     <div class="btn-group">
@@ -420,6 +486,19 @@
     </div>
   </div>
 
+  <!-- ── Post-show Summary ──────────────────────────────────────── -->
+  <div class="section full-width">
+    <div class="section-title">📊 Resumen del show</div>
+    <div id="summary-card">
+      <div class="summary-row"><span class="summary-key">Invitado</span><span class="summary-val" id="sum-guest">—</span></div>
+      <div class="summary-row"><span class="summary-key">Duración</span><span class="summary-val" id="sum-duration">—</span></div>
+      <div class="summary-row"><span class="summary-key">Preguntas respondidas</span><span class="summary-val" id="sum-trivia">—</span></div>
+      <div class="summary-row"><span class="summary-key">🌶️ distribuidos</span><span class="summary-val" id="sum-picantes">—</span></div>
+      <div class="summary-row"><span class="summary-key">Alertas</span><span class="summary-val" id="sum-alerts">—</span></div>
+    </div>
+    <div id="summary-empty" style="font-size:11px;color:var(--muted);">Disponible al finalizar el show.</div>
+  </div>
+
   <!-- ── Event Log (full width) ─────────────────────────────────── -->
   <div class="section full-width">
     <div class="section-title">📋 Eventos recibidos</div>
@@ -435,6 +514,12 @@ var activePlayer = '';
 var currentPts   = 0;
 var miniCorrect  = null;
 var miniLocked   = null;
+
+/* ── Contadores post-show ──────────────────────────────────────────── */
+var _showStartTime   = null;
+var _picantesAwarded = 0;
+var _triviaQAnswered = 0;
+var _alertCount      = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
 
 /* ── Helpers UI ────────────────────────────────────────────────────── */
 function setStatus(connected, msg) {
@@ -465,9 +550,18 @@ function setActivePlayer(name) {
 }
 
 /* ── Mini trivia preview ───────────────────────────────────────────── */
+function triviaSetRevealed(revealed) {
+  document.getElementById('btn-trivia-reveal').disabled = revealed;
+  ['A','B','C','D'].forEach(function (l) {
+    var el = document.getElementById('mini-' + l);
+    if (el) el.style.pointerEvents = revealed ? 'none' : '';
+  });
+}
+
 function triviaShowMini(payload) {
   miniCorrect = payload.correct || null;
   miniLocked  = null;
+  triviaSetRevealed(false);
   document.getElementById('mini-question').textContent = payload.question || '';
   ['A','B','C','D'].forEach(function (l) {
     var el = document.getElementById('mini-' + l);
@@ -489,10 +583,61 @@ function triviaLockMini(letter) {
   });
 }
 
+function triviaRevealMini(payload) {
+  var correct = (payload.correct || '').toUpperCase();
+  var chosen  = (payload.chosen  || miniLocked || '').toUpperCase();
+  ['A','B','C','D'].forEach(function (l) {
+    var el = document.getElementById('mini-' + l);
+    if (!el) return;
+    var cls = 'mini-opt';
+    if (l === correct) cls += ' is-correct';
+    else if (l === chosen && !payload.isCorrect) cls += ' is-wrong';
+    el.className = cls;
+  });
+}
+
 function triviaHideMini() {
   document.getElementById('trivia-mini').style.display = 'none';
   miniCorrect = null;
   miniLocked  = null;
+}
+
+/* ── Rank tracker ──────────────────────────────────────────────────── */
+function renderRankResult(p) {
+  document.getElementById('ri-tier').textContent = p.tier || 'Unranked';
+  document.getElementById('ri-rr').textContent   = p.rr !== undefined ? p.rr + ' RR' : '';
+  document.getElementById('rank-result').style.display = 'block';
+}
+
+/* ── Post-show summary ─────────────────────────────────────────────── */
+function formatDuration(ms) {
+  var s = Math.floor(ms / 1000);
+  var m = Math.floor(s / 60);
+  var h = Math.floor(m / 60);
+  m = m % 60;
+  return (h > 0 ? h + 'h ' : '') + m + 'min';
+}
+
+function showSummary(payload) {
+  var card = document.getElementById('summary-card');
+  document.getElementById('summary-empty').style.display = 'none';
+  card.style.display = 'block';
+
+  document.getElementById('sum-guest').textContent    = payload.guest || activePlayer || '—';
+  document.getElementById('sum-duration').textContent  = payload.duration || '—';
+  document.getElementById('sum-trivia').textContent    = payload.triviaQuestions !== undefined
+    ? payload.triviaQuestions + ' preguntas' : '—';
+  document.getElementById('sum-picantes').textContent  = payload.picantesAwarded !== undefined
+    ? payload.picantesAwarded.toLocaleString('es-ES') + ' 🌶️' : '—';
+
+  var a = payload.alerts || {};
+  var alertStr = [];
+  if (a.follow) alertStr.push(a.follow + ' follows');
+  if (a.sub)    alertStr.push(a.sub + ' subs');
+  if (a.cheer)  alertStr.push(a.cheer + ' cheers');
+  if (a.raid)   alertStr.push(a.raid + ' raids');
+  if (a.gift)   alertStr.push(a.gift + ' gift bombs');
+  document.getElementById('sum-alerts').textContent = alertStr.length ? alertStr.join(' · ') : '0';
 }
 
 /* ── Inicializar cliente ───────────────────────────────────────────── */
@@ -520,17 +665,26 @@ sb.on('General.Custom', function (msg) {
   switch (data.event) {
     case 'trivia.host_question':
       triviaShowMini(data.payload || {});
+      _triviaQAnswered++;
+      break;
+    case 'trivia.show_question':
       break;
     case 'trivia.lock_answer':
       triviaLockMini(data.payload && data.payload.letter);
+      break;
+    case 'trivia.reveal_answer':
+      if (data.payload) triviaRevealMini(data.payload);
+      triviaSetRevealed(true);
       break;
     case 'trivia.game_over':
       triviaHideMini();
       break;
     case 'picantes.quick_change':
-      if (data.payload && activePlayer &&
-          data.payload.player === activePlayer) {
-        updatePtsDisplay(data.payload.total);
+      if (data.payload) {
+        if (data.payload.delta > 0) _picantesAwarded += data.payload.delta;
+        if (activePlayer && data.payload.player === activePlayer) {
+          updatePtsDisplay(data.payload.total);
+        }
       }
       break;
     case 'picantes.leaderboard_update':
@@ -541,6 +695,17 @@ sb.on('General.Custom', function (msg) {
         if (found) updatePtsDisplay(found.points);
       }
       break;
+    case 'player.rank':
+      if (data.payload) renderRankResult(data.payload);
+      break;
+    case 'show.summary':
+      showSummary(data.payload || {});
+      break;
+    case 'alert.follow':  _alertCount.follow++; break;
+    case 'alert.sub':     _alertCount.sub++;    break;
+    case 'alert.cheer':   _alertCount.cheer++;  break;
+    case 'alert.raid':    _alertCount.raid++;   break;
+    case 'alert.gift_bomb': _alertCount.gift++; break;
   }
 });
 
@@ -558,8 +723,166 @@ document.getElementById('btn-set-player').onclick = function () {
   updatePtsDisplay(0);
   call('Show.SetActivePlayer', { player: val });
 };
-document.getElementById('btn-show-start').onclick    = function () { call('Show.Start'); };
-document.getElementById('btn-show-stop').onclick     = function () { call('Show.Stop'); };
+document.getElementById('btn-show-start').onclick = function () {
+  _showStartTime   = Date.now();
+  _picantesAwarded = 0;
+  _triviaQAnswered = 0;
+  _alertCount      = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
+  document.getElementById('summary-card').style.display = 'none';
+  document.getElementById('summary-empty').style.display = 'block';
+  call('Show.Start');
+};
+document.getElementById('btn-show-stop').onclick = function () {
+  var duration = _showStartTime ? formatDuration(Date.now() - _showStartTime) : '—';
+  showSummary({
+    guest:           activePlayer,
+    duration:        duration,
+    triviaQuestions: _triviaQAnswered,
+    picantesAwarded: _picantesAwarded,
+    alerts:          _alertCount,
+  });
+  call('Show.Stop');
+};
+
+/* Rank tracker — el panel hace el fetch (corre en browser real, no file://) */
+/* Rank tracker — auto fetch con Henrik API key */
+var RANK_REGIONS = ['latam', 'na', 'eu', 'ap', 'br'];
+
+function fetchRankFromPanel(riotId, region, cb) {
+  var parts = riotId.trim().split('#');
+  if (parts.length < 2) { cb(null, 'Formato inválido (Nick#TAG)'); return; }
+  var name    = encodeURIComponent(parts[0]);
+  var tag     = encodeURIComponent(parts[1]);
+  var apiKey  = localStorage.getItem('henrikApiKey') || '';
+  var headers = apiKey ? { 'Authorization': apiKey } : {};
+  var base    = 'https://api.henrikdev.xyz/valorant';
+
+  // v3 MMR
+  fetch(base + '/v3/mmr/' + region + '/pc/' + name + '/' + tag, { headers: headers })
+    .then(function (r) { return r.json(); })
+    .then(function (mmr) {
+      if (!mmr || mmr.status !== 200 || !mmr.data) {
+        cb(null, region + ' → ' + (mmr && mmr.message || mmr && mmr.status || '?'));
+        return;
+      }
+      var d   = mmr.data;
+      var cur = d.current || {};
+      var tier = (cur.tier && cur.tier.name) || 'Unranked';
+      var rr   = cur.rr !== undefined ? cur.rr : 0;
+
+      // mmr-history + lifetime/matches en paralelo
+      Promise.all([
+        fetch(base + '/v1/mmr-history/' + region + '/' + name + '/' + tag, { headers: headers }).then(function(r){return r.json();}),
+        fetch(base + '/v1/lifetime/matches/' + region + '/' + name + '/' + tag + '?mode=competitive&size=20', { headers: headers }).then(function(r){return r.json();})
+      ]).then(function(results) {
+          var hist  = results[0];
+          var mData = results[1];
+
+          // mmr-history → W/L pips + win rate
+          var matches = [];
+          var wins = 0, played = 0;
+          var items = (hist && hist.data) || [];
+          if (!Array.isArray(items)) items = [];
+          items.slice(0, 20).forEach(function (m) {
+            var change = m.mmr_change_to_last_game !== undefined ? m.mmr_change_to_last_game
+                       : m.last_mmr_change !== undefined ? m.last_mmr_change : null;
+            if (change === null) return;
+            var w = change > 0 ? 'W' : 'L';
+            if (matches.length < 8) matches.push(w);
+            wins += (w === 'W' ? 1 : 0);
+            played += 1;
+          });
+          var winRate = played > 0 ? Math.round((wins / played) * 100) : null;
+
+          // lifetime/matches → KDA + HS%
+          var kda = null, hsPercent = null;
+          var matchList = (mData && mData.data) || [];
+          if (Array.isArray(matchList) && matchList.length > 0) {
+            var totalK=0, totalD=0, totalA=0, totalHead=0, totalBody=0, totalLeg=0;
+            matchList.forEach(function(m) {
+              var s = m.stats || {};
+              totalK += (s.kills  || 0);
+              totalD += (s.deaths || 0);
+              totalA += (s.assists || 0);
+              var shots = s.shots || {};
+              totalHead += (shots.head || 0);
+              totalBody += (shots.body || 0);
+              totalLeg  += (shots.leg  || 0);
+            });
+            kda = totalD > 0 ? ((totalK + totalA) / totalD).toFixed(2) : null;
+            var totalShots = totalHead + totalBody + totalLeg;
+            hsPercent = totalShots > 0 ? Math.round((totalHead / totalShots) * 100) : null;
+            logEvent('[Track] KDA=' + kda + ' HS=' + hsPercent + '% (' + matchList.length + ' competitive)');
+          }
+
+          logEvent('[Track] historial: ' + played + ' partidas, WR ' + winRate + '%');
+          cb({ player: riotId, tier: tier, rr: rr, region: region,
+               winRate: winRate, recentMatches: matches, kda: kda, hsPercent: hsPercent });
+        })
+        .catch(function () {
+          cb({ player: riotId, tier: tier, rr: rr, region: region });
+        });
+    })
+    .catch(function (e) { cb(null, 'fetch error: ' + e.message); });
+}
+
+document.getElementById('valorant-input').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') fetchAndShow();
+});
+
+function fetchAndShow() {
+  var val    = document.getElementById('valorant-input').value.trim();
+  var region = document.getElementById('rank-region-select').value;
+  if (!val) return;
+  document.getElementById('rank-result').style.display = 'none';
+  logEvent('[Track] buscando ' + val + ' en ' + region.toUpperCase() + '...');
+  fetchRankFromPanel(val, region, function (result, err) {
+    if (!result) { logEvent('[Track] Error: ' + err); return; }
+    renderRankResult(result);
+    logEvent('[Track] ' + result.player + ' = ' + result.tier + ' ' + result.rr + 'RR'
+      + (result.winRate !== null && result.winRate !== undefined ? ' WR:' + result.winRate + '%' : ''));
+    call('Show.RankBroadcast', {
+      player:        result.player,
+      tier:          result.tier,
+      rr:            String(result.rr),
+      winRate:       result.winRate    != null ? String(result.winRate)    : '',
+      recentMatches: (result.recentMatches || []).join(','),
+      kda:           result.kda        != null ? String(result.kda)        : '',
+      hsPercent:     result.hsPercent  != null ? String(result.hsPercent)  : '',
+    });
+  });
+}
+
+/* Rank tracker manual */
+document.getElementById('btn-rank-manual').onclick = function () {
+  var tier   = document.getElementById('rank-manual-tier').value.trim();
+  var rr     = parseInt(document.getElementById('rank-manual-rr').value, 10) || 0;
+  var player = document.getElementById('valorant-input').value.trim() || activePlayer || '—';
+  if (!tier) return;
+  renderRankResult({ player: player, tier: tier, rr: rr });
+  call('Show.RankBroadcast', { player: player, tier: tier, rr: String(rr) });
+};
+
+document.getElementById('btn-track-rank').onclick = fetchAndShow;
+
+// API key persistence
+(function () {
+  var saved = localStorage.getItem('henrikApiKey') || '';
+  if (saved) document.getElementById('henrik-key-input').placeholder = 'Key guardada ✓';
+})();
+document.getElementById('btn-henrik-key-save').onclick = function () {
+  var key = document.getElementById('henrik-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem('henrikApiKey', key);
+  document.getElementById('henrik-key-input').value = '';
+  document.getElementById('henrik-key-input').placeholder = 'Key guardada ✓';
+  logEvent('[Track] API key actualizada');
+};
+
+document.getElementById('btn-rank-hide').onclick = function () {
+  document.getElementById('rank-result').style.display = 'none';
+  call('Show.RankHide');
+};
 document.getElementById('btn-scene-trivia').onclick  = function () { call('Show.SwitchScene.Trivia'); };
 document.getElementById('btn-scene-hottake').onclick = function () { call('Show.SwitchScene.HotTake'); };
 document.getElementById('btn-scene-hostsolo').onclick = function () { call('Show.SwitchScene.HostSolo'); };
@@ -569,7 +892,7 @@ document.getElementById('btn-discord-golive').onclick = function () { call('Infr
 /* Trivia */
 document.getElementById('btn-trivia-start').onclick    = function () { call('Trivia.Start', activePlayer ? { playerName: activePlayer } : {}); };
 document.getElementById('btn-trivia-next').onclick     = function () { call('Trivia.NextQuestion'); };
-document.getElementById('btn-trivia-reveal').onclick   = function () { call('Trivia.RevealAnswer'); };
+document.getElementById('btn-trivia-reveal').onclick   = function () { triviaSetRevealed(true); call('Trivia.RevealAnswer'); };
 document.getElementById('btn-trivia-walkaway').onclick = function () { call('Trivia.WalkAway'); };
 document.getElementById('btn-trivia-gameover').onclick = function () { call('Trivia.GameOver'); };
 document.getElementById('btn-life-5050').onclick    = function () { call('Trivia.Lifeline.FiftyFifty'); };

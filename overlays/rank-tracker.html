@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rank Tracker — Spike Picante</title>
+  <link rel="stylesheet" href="rank-tracker.css">
+</head>
+<body>
+  <div id="rank-card" class="hidden">
+    <div id="rank-header">
+      <div id="rank-tier-block">
+        <div id="rank-icon"></div>
+        <div id="rank-info">
+          <div id="rank-name"></div>
+          <div id="rank-rr"></div>
+        </div>
+      </div>
+      <div id="rank-player"></div>
+    </div>
+    <div id="rank-stats">
+      <div class="stat-block">
+        <div class="stat-value" id="stat-winrate"></div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value" id="stat-kda"></div>
+        <div class="stat-label">KDA</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value" id="stat-hs"></div>
+        <div class="stat-label">HS%</div>
+      </div>
+    </div>
+    <div id="rank-matches">
+      <div class="match-label">Últimas partidas</div>
+      <div id="match-row"></div>
+    </div>
+  </div>
+
+  <script src="vendor/streamerbot-client.js"></script>
+  <script src="rank-tracker.js"></script>
+</body>
+</html>

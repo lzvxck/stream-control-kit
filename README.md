@@ -35,6 +35,7 @@ Show de streaming sobre Valorant/VCT. Host + invitado del día. Sin backend prop
 | Alerts | `overlays\alerts.html` | 1920×1080 |
 | Wheel | `overlays\wheel.html` | 600×600 |
 | Timer | `overlays\timer.html` | 200×200 |
+| Rank Tracker | `overlays\rank-tracker.html` | 320×200 |
 
 ---
 

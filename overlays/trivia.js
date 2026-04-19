@@ -66,14 +66,16 @@ function renderQuestion(payload) {
   state.qNum = payload.qNum || state.qNum + 1;
   resetOptions();
 
-  document.getElementById('question-text').textContent = payload.question;
+  var qEl = document.getElementById('question-text');
+  scrambleText(qEl, payload.question || '', 400);
   document.getElementById('difficulty-badge').textContent =
     'Pregunta ' + state.qNum + ' · Dificultad ' + (payload.difficulty || '?');
 
   ['A', 'B', 'C', 'D'].forEach(function (l) {
     var btn = document.querySelector('.opt[data-letter="' + l + '"]');
     if (btn && payload.options && payload.options[l] !== undefined) {
-      btn.querySelector('.opt-text').textContent = payload.options[l];
+      var optEl = btn.querySelector('.opt-text');
+      scrambleText(optEl, payload.options[l], 350);
     }
   });
 
@@ -190,12 +192,53 @@ function gameOver(payload) {
   }, 8000);
 }
 
+/* ── Text scramble ────────────────────────────────────────────────────── */
+var SCRAMBLE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
+function scrambleText(el, finalText, duration) {
+  // Cancel any previous scramble on THIS element specifically
+  if (el._scrambleIv) clearInterval(el._scrambleIv);
+
+  var len = finalText.length;
+  var start = Date.now();
+  var revealPerMs = len / duration;
+
+  el._scrambleIv = setInterval(function () {
+    var elapsed  = Date.now() - start;
+    var resolved = Math.min(Math.floor(elapsed * revealPerMs), len);
+
+    var out = finalText.slice(0, resolved);
+    for (var i = resolved; i < len; i++) {
+      var ch = finalText[i];
+      out += (ch === ' ' || ch === '¿' || ch === '?' || ch === ',' || ch === '.')
+        ? ch
+        : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+    }
+    el.textContent = out;
+
+    if (resolved >= len) {
+      clearInterval(el._scrambleIv);
+      el._scrambleIv = null;
+      el.textContent = finalText;
+    }
+  }, 30);
+}
+
+/* ── Indicador de conexión ─────────────────────────────────────────── */
+var _wsDot = (function () {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#f55;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;';
+  document.body.appendChild(d);
+  return { ok: function () { d.style.opacity = '0'; }, fail: function () { d.style.opacity = '0.75'; } };
+})();
+
 /* ── Cliente SB ───────────────────────────────────────────────────────── */
 var client = new StreamerbotClient({
   host: '127.0.0.1',
   port: 8080,
   password: null,
   autoSubscribe: { General: ['Custom'] },
+  onConnect: function () { _wsDot.ok(); },
+  onDisconnect: function () { _wsDot.fail(); },
 });
 
 client.on('General.Custom', function (msg) {
