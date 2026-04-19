@@ -9,24 +9,13 @@ Verificación manual componente por componente. Ejecutar en este orden.
 - Streamer.bot corriendo con todas las acciones importadas
 - OBS abierto y conectado a SB (ícono verde en Stream Apps → OBS)
 - WebSocket Server activo en SB (puerto 8080)
-- HTTP Server activo en SB (puerto 7474)
 - Archivos del proyecto en `C:\streams\spike-picante\`
 
 ---
 
-## 1. HTTP Server
+## 1. WebSocket
 
-1. Abrir Chrome → `http://127.0.0.1:7474/overlays/scoreboard.html`
-
-**Esperado:** La página carga sin errores 404 en consola (F12).
-
-**Si falla:** Verificar Path Mappings en SB → HTTP Server.
-
----
-
-## 2. WebSocket
-
-1. Abrir `http://127.0.0.1:7474/overlays/scoreboard.html`
+1. Abrir `C:\streams\spike-picante\overlays\scoreboard.html`
 2. F12 → Console → esperar 2-3 segundos
 
 **Esperado:** Sin errores `WebSocket connection failed`. El dot del panel de control se pone verde.
@@ -62,7 +51,7 @@ Esperado: mismo efecto que 3c con `+1`.
 
 ## 4. Panel de control
 
-1. Abrir `http://127.0.0.1:7474/control/index.html`
+1. Abrir `C:\streams\spike-picante\control\index.html`
 2. Esperar dot verde arriba
 3. Ingresar nombre en "Jugador activo" → **Setear**
 4. Click `+1`
@@ -77,7 +66,7 @@ Esperado:
 
 ## 5. Timer
 
-1. Abrir `http://127.0.0.1:7474/overlays/timer.html`
+1. Abrir `C:\streams\spike-picante\overlays\timer.html`
 2. En el panel → Timer → click `+30` → click `▶ Start`
 
 Esperado: el overlay muestra el número bajando. A 15s el anillo se atenúa. A 10s se pone rojo. Al llegar a 0 queda en rojo dimmed.
@@ -92,7 +81,7 @@ Esperado: el overlay muestra el número bajando. A 15s el anillo se atenúa. A 1
 ## 6. Trivia
 
 **6a. Iniciar**
-1. Abrir `http://127.0.0.1:7474/overlays/trivia.html`
+1. Abrir `C:\streams\spike-picante\overlays\trivia.html`
 2. Panel → setear jugador → `🎮 Start Game`
 
 Esperado:
@@ -140,7 +129,7 @@ Esperado: overlay desaparece, mensaje en chat con picantes ganados.
 ## 7. Alerts
 
 **7a. Follow**
-1. Abrir `http://127.0.0.1:7474/overlays/alerts.html`
+1. Abrir `C:\streams\spike-picante\overlays\alerts.html`
 2. SB → `Alert.Follow` → Test → `user = testuser`
 
 Esperado: toast pequeño arriba a la derecha, desaparece en ~2s.
@@ -164,7 +153,7 @@ Esperado: aparecen una tras otra, nunca simultáneas.
 
 ## 8. Ruleta
 
-1. Abrir `http://127.0.0.1:7474/overlays/wheel.html`
+1. Abrir `C:\streams\spike-picante\overlays\wheel.html`
 2. SB → `Wheel.Spin` → Test → `input0 = 1`
 
 Esperado: ruleta gira 4-6s, frena en el ganador, banner aparece abajo.

@@ -13,13 +13,15 @@
 
 Crear una **Browser Source** para cada overlay en las escenas correspondientes.
 
-| Source | URL | Tamaño | Escenas |
-|--------|-----|--------|---------|
-| Scoreboard | `http://127.0.0.1:7474/overlays/scoreboard.html` | 400×600 | Todas |
-| Trivia | `http://127.0.0.1:7474/overlays/trivia.html` | 1920×1080 | Show - Trivia Board |
-| Alerts | `http://127.0.0.1:7474/overlays/alerts.html` | 1920×1080 | Todas |
-| Wheel | `http://127.0.0.1:7474/overlays/wheel.html` | 600×600 | Cuando se necesite |
-| Timer | `http://127.0.0.1:7474/overlays/timer.html` | 200×200 | Cuando se necesite |
+| Source | Path local | Tamaño | Escenas |
+|--------|------------|--------|---------|
+| Scoreboard | `C:\streams\spike-picante\overlays\scoreboard.html` | 400×600 | Todas |
+| Trivia | `C:\streams\spike-picante\overlays\trivia.html` | 1920×1080 | Show - Trivia Board |
+| Alerts | `C:\streams\spike-picante\overlays\alerts.html` | 1920×1080 | Todas |
+| Wheel | `C:\streams\spike-picante\overlays\wheel.html` | 600×600 | Cuando se necesite |
+| Timer | `C:\streams\spike-picante\overlays\timer.html` | 200×200 | Cuando se necesite |
+
+En OBS, al crear la Browser Source elegir **Local file** y navegar hasta el archivo. No es necesario el HTTP Server de SB para los overlays — solo necesitan el WebSocket Server (puerto 8080) para recibir eventos.
 
 **Configuración para cada Browser Source:**
 - FPS: 30 (60 solo para Alerts si querés confetti más suave)

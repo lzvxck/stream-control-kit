@@ -30,11 +30,11 @@ Show de streaming sobre Valorant/VCT. Host + invitado del día. Sin backend prop
 
 | Overlay | URL | Tamaño OBS |
 |---------|-----|------------|
-| Scoreboard | `http://127.0.0.1:7474/overlays/scoreboard.html` | 400×600 |
-| Trivia | `http://127.0.0.1:7474/overlays/trivia.html` | 1920×1080 |
-| Alerts | `http://127.0.0.1:7474/overlays/alerts.html` | 1920×1080 |
-| Wheel | `http://127.0.0.1:7474/overlays/wheel.html` | 600×600 |
-| Timer | `http://127.0.0.1:7474/overlays/timer.html` | 200×200 |
+| Scoreboard | `overlays\scoreboard.html` | 400×600 |
+| Trivia | `overlays\trivia.html` | 1920×1080 |
+| Alerts | `overlays\alerts.html` | 1920×1080 |
+| Wheel | `overlays\wheel.html` | 600×600 |
+| Timer | `overlays\timer.html` | 200×200 |
 
 ---
 
