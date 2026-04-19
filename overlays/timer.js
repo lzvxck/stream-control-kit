@@ -1,18 +1,18 @@
-var CIRCUMFERENCE = 2 * Math.PI * 54; // 339.292
+const CIRCUMFERENCE = 2 * Math.PI * 54; // 339.292
 
-var totalSeconds = 30;
-var remainingSeconds = 30;
-var timerInterval = null;
+let totalSeconds    = 30;
+let remainingSeconds = 30;
+let timerInterval   = null;
 
 function setTime(seconds) {
-  totalSeconds = seconds;
+  totalSeconds     = seconds;
   remainingSeconds = seconds;
   updateDisplay();
 }
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(function () {
+  timerInterval = setInterval(() => {
     if (remainingSeconds <= 0) {
       clearInterval(timerInterval);
       timerInterval = null;
@@ -39,13 +39,13 @@ function resetTimer() {
 }
 
 function updateDisplay() {
-  var arc   = document.getElementById('timer-arc');
-  var count = document.getElementById('timer-count');
-  var wrap  = document.getElementById('timer-wrap');
+  const arc   = document.getElementById('timer-arc');
+  const count = document.getElementById('timer-count');
+  const wrap  = document.getElementById('timer-wrap');
 
   count.textContent = remainingSeconds;
 
-  var progress = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
+  const progress = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
   arc.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
   wrap.className = '';
@@ -55,24 +55,27 @@ function updateDisplay() {
 }
 
 /* ── Indicador de conexión ─────────────────────────────────────────── */
-var _wsDot = (function () {
-  var d = document.createElement('div');
+const _wsDot = (() => {
+  const d = document.createElement('div');
   d.style.cssText = 'position:fixed;bottom:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#f55;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;';
   document.body.appendChild(d);
-  return { ok: function () { d.style.opacity = '0'; }, fail: function () { d.style.opacity = '0.75'; } };
+  return {
+    ok:   () => { d.style.opacity = '0'; },
+    fail: () => { d.style.opacity = '0.75'; },
+  };
 })();
 
-var client = new StreamerbotClient({
-  host: '127.0.0.1',
-  port: 8080,
-  password: null,
+const client = new StreamerbotClient({
+  host:          '127.0.0.1',
+  port:          8080,
+  password:      null,
   autoSubscribe: { General: ['Custom'] },
-  onConnect: function () { _wsDot.ok(); },
-  onDisconnect: function () { _wsDot.fail(); },
+  onConnect:    () => { _wsDot.ok(); },
+  onDisconnect: () => { _wsDot.fail(); },
 });
 
-client.on('General.Custom', function (msg) {
-  var data = msg.data;
+client.on('General.Custom', msg => {
+  const data = msg.data;
   if (!data || !data.event) return;
   switch (data.event) {
     case 'timer.set':

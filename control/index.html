@@ -514,16 +514,16 @@
 <script src="../overlays/vendor/streamerbot-client.js"></script>
 <script>
 /* ── Estado local ──────────────────────────────────────────────────── */
-var activePlayer = '';
-var currentPts   = 0;
-var miniCorrect  = null;
-var miniLocked   = null;
+let activePlayer = '';
+let currentPts   = 0;
+let miniCorrect  = null;
+let miniLocked   = null;
 
 /* ── Contadores post-show ──────────────────────────────────────────── */
-var _showStartTime    = null;
-var _playerPtsAtStart = 0;
-var _triviaQAnswered  = 0;
-var _alertCount       = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
+let _showStartTime    = null;
+let _playerPtsAtStart = 0;
+let _triviaQAnswered  = 0;
+let _alertCount       = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
 
 /* ── Helpers UI ────────────────────────────────────────────────────── */
 function setStatus(connected, msg) {
@@ -532,13 +532,11 @@ function setStatus(connected, msg) {
 }
 
 function logEvent(data) {
-  var log = document.getElementById('event-log');
-  var ts  = new Date().toLocaleTimeString('es-AR', { hour12: false });
-  var line = '[' + ts + '] ' + (typeof data === 'string' ? data : JSON.stringify(data)) + '\n';
+  const log  = document.getElementById('event-log');
+  const ts   = new Date().toLocaleTimeString('es-AR', { hour12: false });
+  const line = `[${ts}] ${typeof data === 'string' ? data : JSON.stringify(data)}\n`;
   log.textContent = line + log.textContent;
-  if (log.textContent.length > 6000) {
-    log.textContent = log.textContent.substring(0, 6000);
-  }
+  if (log.textContent.length > 6000) log.textContent = log.textContent.substring(0, 6000);
 }
 
 function updatePtsDisplay(pts) {
@@ -548,16 +546,16 @@ function updatePtsDisplay(pts) {
 
 function setActivePlayer(name) {
   activePlayer = name.toLowerCase();
-  document.getElementById('active-player-display').textContent = '🎮 ' + activePlayer;
-  document.getElementById('quick-target-label').textContent = '→ ' + activePlayer;
-  document.querySelectorAll('[data-amount]').forEach(function (b) { b.disabled = false; });
+  document.getElementById('active-player-display').textContent = `🎮 ${activePlayer}`;
+  document.getElementById('quick-target-label').textContent    = `→ ${activePlayer}`;
+  document.querySelectorAll('[data-amount]').forEach(b => { b.disabled = false; });
 }
 
 /* ── Mini trivia preview ───────────────────────────────────────────── */
 function triviaSetRevealed(revealed) {
   if (revealed) document.getElementById('btn-trivia-reveal').disabled = true;
-  ['A','B','C','D'].forEach(function (l) {
-    var el = document.getElementById('mini-' + l);
+  ['A','B','C','D'].forEach(l => {
+    const el = document.getElementById(`mini-${l}`);
     if (el) el.style.pointerEvents = revealed ? 'none' : '';
   });
 }
@@ -567,12 +565,12 @@ function triviaShowMini(payload) {
   miniLocked  = null;
   triviaSetRevealed(false);
   document.getElementById('btn-trivia-reveal').disabled = true;
-  document.getElementById('mini-question').textContent = payload.question || '';
-  ['A','B','C','D'].forEach(function (l) {
-    var el = document.getElementById('mini-' + l);
+  document.getElementById('mini-question').textContent  = payload.question || '';
+  ['A','B','C','D'].forEach(l => {
+    const el      = document.getElementById(`mini-${l}`);
     el.querySelector('.mini-text').textContent = (payload.options && payload.options[l]) || '';
-    el.className = 'mini-opt' + (l === miniCorrect ? ' is-correct' : '');
-    var lockBtn = document.querySelector('.lock-btns [data-letter="' + l + '"]');
+    el.className  = `mini-opt${l === miniCorrect ? ' is-correct' : ''}`;
+    const lockBtn = document.querySelector(`.lock-btns [data-letter="${l}"]`);
     if (lockBtn) lockBtn.disabled = false;
   });
   document.getElementById('trivia-mini').style.display = 'block';
@@ -581,9 +579,9 @@ function triviaShowMini(payload) {
 function triviaLockMini(letter) {
   if (!letter) return;
   miniLocked = letter.toUpperCase();
-  ['A','B','C','D'].forEach(function (l) {
-    var el = document.getElementById('mini-' + l);
-    var cls = 'mini-opt';
+  ['A','B','C','D'].forEach(l => {
+    const el  = document.getElementById(`mini-${l}`);
+    let cls   = 'mini-opt';
     if (l === miniCorrect) cls += ' is-correct';
     if (l === miniLocked)  cls += ' is-locked';
     if (el.classList.contains('is-dimmed')) cls += ' is-dimmed';
@@ -593,12 +591,12 @@ function triviaLockMini(letter) {
 }
 
 function triviaRevealMini(payload) {
-  var correct = (payload.correct || '').toUpperCase();
-  var chosen  = (payload.chosen  || miniLocked || '').toUpperCase();
-  ['A','B','C','D'].forEach(function (l) {
-    var el = document.getElementById('mini-' + l);
+  const correct = (payload.correct || '').toUpperCase();
+  const chosen  = (payload.chosen  || miniLocked || '').toUpperCase();
+  ['A','B','C','D'].forEach(l => {
+    const el = document.getElementById(`mini-${l}`);
     if (!el) return;
-    var cls = 'mini-opt';
+    let cls = 'mini-opt';
     if (l === correct) cls += ' is-correct';
     else if (l === chosen && !payload.isCorrect) cls += ' is-wrong';
     el.className = cls;
@@ -606,11 +604,11 @@ function triviaRevealMini(payload) {
 }
 
 function triviaFiftyFiftyMini(remove) {
-  (remove || []).forEach(function (l) {
-    var letter = l.toUpperCase();
-    var el = document.getElementById('mini-' + letter);
+  (remove || []).forEach(l => {
+    const letter  = l.toUpperCase();
+    const el      = document.getElementById(`mini-${letter}`);
     if (el) el.classList.add('is-dimmed');
-    var lockBtn = document.querySelector('.lock-btns [data-letter="' + letter + '"]');
+    const lockBtn = document.querySelector(`.lock-btns [data-letter="${letter}"]`);
     if (lockBtn) lockBtn.disabled = true;
   });
 }
@@ -623,61 +621,54 @@ function triviaHideMini() {
 
 /* ── Rank tracker ──────────────────────────────────────────────────── */
 function renderRankResult(p) {
-  document.getElementById('ri-tier').textContent = p.tier || 'Unranked';
-  document.getElementById('ri-rr').textContent   = p.rr !== undefined ? p.rr + ' RR' : '';
+  document.getElementById('ri-tier').textContent       = p.tier || 'Unranked';
+  document.getElementById('ri-rr').textContent         = p.rr !== undefined ? `${p.rr} RR` : '';
   document.getElementById('rank-result').style.display = 'block';
 }
 
 /* ── Post-show summary ─────────────────────────────────────────────── */
 function formatDuration(ms) {
-  var s = Math.floor(ms / 1000);
-  var m = Math.floor(s / 60);
-  var h = Math.floor(m / 60);
-  m = m % 60;
-  return (h > 0 ? h + 'h ' : '') + m + 'min';
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return (h > 0 ? `${h}h ` : '') + `${m}min`;
 }
 
 function showSummary(payload) {
-  var card = document.getElementById('summary-card');
+  const card = document.getElementById('summary-card');
   document.getElementById('summary-empty').style.display = 'none';
   card.style.display = 'block';
 
   document.getElementById('sum-guest').textContent    = payload.guest || activePlayer || '—';
-  document.getElementById('sum-duration').textContent  = payload.duration || '—';
-  document.getElementById('sum-trivia').textContent    = payload.triviaQuestions !== undefined
-    ? payload.triviaQuestions + ' preguntas' : '—';
-  document.getElementById('sum-picantes').textContent  = payload.picantesAwarded !== undefined
-    ? payload.picantesAwarded.toLocaleString('es-ES') + ' 🌶️' : '—';
+  document.getElementById('sum-duration').textContent = payload.duration || '—';
+  document.getElementById('sum-trivia').textContent   = payload.triviaQuestions !== undefined
+    ? `${payload.triviaQuestions} preguntas` : '—';
+  document.getElementById('sum-picantes').textContent = payload.picantesAwarded !== undefined
+    ? `${payload.picantesAwarded.toLocaleString('es-ES')} 🌶️` : '—';
 
-  var a = payload.alerts || {};
-  var alertStr = [];
-  if (a.follow) alertStr.push(a.follow + ' follows');
-  if (a.sub)    alertStr.push(a.sub + ' subs');
-  if (a.cheer)  alertStr.push(a.cheer + ' cheers');
-  if (a.raid)   alertStr.push(a.raid + ' raids');
-  if (a.gift)   alertStr.push(a.gift + ' gift bombs');
+  const a        = payload.alerts || {};
+  const alertStr = [];
+  if (a.follow) alertStr.push(`${a.follow} follows`);
+  if (a.sub)    alertStr.push(`${a.sub} subs`);
+  if (a.cheer)  alertStr.push(`${a.cheer} cheers`);
+  if (a.raid)   alertStr.push(`${a.raid} raids`);
+  if (a.gift)   alertStr.push(`${a.gift} gift bombs`);
   document.getElementById('sum-alerts').textContent = alertStr.length ? alertStr.join(' · ') : '0';
 }
 
 /* ── Inicializar cliente ───────────────────────────────────────────── */
-var sb = new StreamerbotClient({
-  host: '127.0.0.1',
-  port: 8080,
-  password: null,
+const sb = new StreamerbotClient({
+  host:          '127.0.0.1',
+  port:          8080,
+  password:      null,
   autoSubscribe: { General: ['Custom'] },
-  onConnect: function () {
-    setStatus(true, 'Conectado a Streamer.bot ✓');
-    logEvent('--- Conectado ---');
-  },
-  onDisconnect: function () {
-    setStatus(false, 'Desconectado — reconectando...');
-    logEvent('--- Desconectado ---');
-  },
+  onConnect:    () => { setStatus(true,  'Conectado a Streamer.bot ✓');   logEvent('--- Conectado ---'); },
+  onDisconnect: () => { setStatus(false, 'Desconectado — reconectando...'); logEvent('--- Desconectado ---'); },
 });
 
 /* Escuchar eventos para sincronizar estado */
-sb.on('General.Custom', function (msg) {
-  var data = msg.data;
+sb.on('General.Custom', msg => {
+  const data = msg.data;
   if (!data || !data.event) return;
   logEvent(data);
 
@@ -708,51 +699,49 @@ sb.on('General.Custom', function (msg) {
       break;
     case 'picantes.leaderboard_update':
       if (data.payload && activePlayer) {
-        var found = (data.payload.players || []).find(function (p) {
-          return p.name === activePlayer;
-        });
+        const found = (data.payload.players || []).find(p => p.name === activePlayer);
         if (found) updatePtsDisplay(found.points);
       }
       break;
     case 'player.rank':
       if (data.payload) renderRankResult(data.payload);
       break;
-    case 'alert.follow':  _alertCount.follow++; break;
-    case 'alert.sub':     _alertCount.sub++;    break;
-    case 'alert.cheer':   _alertCount.cheer++;  break;
-    case 'alert.raid':    _alertCount.raid++;   break;
-    case 'alert.gift_bomb': _alertCount.gift++; break;
+    case 'alert.follow':    _alertCount.follow++; break;
+    case 'alert.sub':       _alertCount.sub++;    break;
+    case 'alert.cheer':     _alertCount.cheer++;  break;
+    case 'alert.raid':      _alertCount.raid++;   break;
+    case 'alert.gift_bomb': _alertCount.gift++;   break;
   }
 });
 
 /* ── Acciones ──────────────────────────────────────────────────────── */
 function call(name, args) {
-  sb.doAction({ name: name }, args || {});
-  logEvent('→ ' + name + ' ' + JSON.stringify(args || {}));
+  sb.doAction({ name }, args || {});
+  logEvent(`→ ${name} ${JSON.stringify(args || {})}`);
 }
 
 /* Show Flow */
-document.getElementById('btn-set-player').onclick = function () {
-  var val = document.getElementById('player-input').value.trim();
+document.getElementById('btn-set-player').onclick = () => {
+  const val = document.getElementById('player-input').value.trim();
   if (!val) return;
   setActivePlayer(val);
   updatePtsDisplay(0);
   call('Show.SetActivePlayer', { player: val });
 };
-document.getElementById('btn-show-start').onclick = function () {
+document.getElementById('btn-show-start').onclick = () => {
   _showStartTime    = Date.now();
   _playerPtsAtStart = currentPts;
   _triviaQAnswered  = 0;
   _alertCount       = { follow: 0, sub: 0, cheer: 0, raid: 0, gift: 0 };
-  document.getElementById('summary-card').style.display = 'none';
+  document.getElementById('summary-card').style.display  = 'none';
   document.getElementById('summary-empty').style.display = 'block';
   call('Show.Start');
 };
-document.getElementById('btn-show-stop').onclick = function () {
-  var duration = _showStartTime ? formatDuration(Date.now() - _showStartTime) : '—';
+document.getElementById('btn-show-stop').onclick = () => {
+  const duration = _showStartTime ? formatDuration(Date.now() - _showStartTime) : '—';
   showSummary({
     guest:           activePlayer,
-    duration:        duration,
+    duration,
     triviaQuestions: _triviaQAnswered,
     picantesAwarded: Math.max(0, currentPts - _playerPtsAtStart),
     alerts:          _alertCount,
@@ -760,241 +749,216 @@ document.getElementById('btn-show-stop').onclick = function () {
   call('Show.Stop');
 };
 
-/* Rank tracker — el panel hace el fetch (corre en browser real, no file://) */
-/* Rank tracker — auto fetch con Henrik API key */
-var RANK_REGIONS = ['latam', 'na', 'eu', 'ap', 'br'];
+/* ── Rank tracker ──────────────────────────────────────────────────── */
+async function fetchRankFromPanel(riotId, region) {
+  const parts = riotId.trim().split('#');
+  if (parts.length < 2) throw new Error('Formato inválido (Nick#TAG)');
+  const name    = encodeURIComponent(parts[0]);
+  const tag     = encodeURIComponent(parts[1]);
+  const apiKey  = localStorage.getItem('henrikApiKey') || '';
+  const headers = apiKey ? { 'Authorization': apiKey } : {};
+  const base    = 'https://api.henrikdev.xyz/valorant';
 
-function fetchRankFromPanel(riotId, region, cb) {
-  var parts = riotId.trim().split('#');
-  if (parts.length < 2) { cb(null, 'Formato inválido (Nick#TAG)'); return; }
-  var name    = encodeURIComponent(parts[0]);
-  var tag     = encodeURIComponent(parts[1]);
-  var apiKey  = localStorage.getItem('henrikApiKey') || '';
-  var headers = apiKey ? { 'Authorization': apiKey } : {};
-  var base    = 'https://api.henrikdev.xyz/valorant';
+  const mmrRes = await fetch(`${base}/v3/mmr/${region}/pc/${name}/${tag}`, { headers });
+  const mmr    = await mmrRes.json();
 
-  // v3 MMR
-  fetch(base + '/v3/mmr/' + region + '/pc/' + name + '/' + tag, { headers: headers })
-    .then(function (r) { return r.json(); })
-    .then(function (mmr) {
-      if (!mmr || mmr.status !== 200 || !mmr.data) {
-        cb(null, region + ' → ' + (mmr && mmr.message || mmr && mmr.status || '?'));
-        return;
+  if (!mmr || mmr.status !== 200 || !mmr.data) {
+    throw new Error(`${region} → ${mmr?.message || mmr?.status || '?'}`);
+  }
+
+  const cur  = mmr.data.current || {};
+  const tier = cur.tier?.name || 'Unranked';
+  const rr   = cur.rr ?? 0;
+
+  try {
+    const [hist, mData] = await Promise.all([
+      fetch(`${base}/v1/mmr-history/${region}/${name}/${tag}`, { headers }).then(r => r.json()),
+      fetch(`${base}/v1/lifetime/matches/${region}/${name}/${tag}?mode=competitive&size=20`, { headers }).then(r => r.json()),
+    ]);
+
+    const items   = Array.isArray(hist?.data) ? hist.data : [];
+    const matches = [];
+    let wins = 0, played = 0;
+    for (const m of items.slice(0, 20)) {
+      const change = m.mmr_change_to_last_game ?? m.last_mmr_change ?? null;
+      if (change === null) continue;
+      const w = change > 0 ? 'W' : 'L';
+      if (matches.length < 8) matches.push(w);
+      wins += w === 'W' ? 1 : 0;
+      played++;
+    }
+    const winRate = played > 0 ? Math.round((wins / played) * 100) : null;
+
+    let kda = null, hsPercent = null;
+    const matchList = Array.isArray(mData?.data) ? mData.data : [];
+    if (matchList.length > 0) {
+      let totalK=0, totalD=0, totalA=0, totalHead=0, totalBody=0, totalLeg=0;
+      for (const m of matchList) {
+        const s     = m.stats || {};
+        const shots = s.shots || {};
+        totalK    += s.kills   || 0;
+        totalD    += s.deaths  || 0;
+        totalA    += s.assists || 0;
+        totalHead += shots.head || 0;
+        totalBody += shots.body || 0;
+        totalLeg  += shots.leg  || 0;
       }
-      var d   = mmr.data;
-      var cur = d.current || {};
-      var tier = (cur.tier && cur.tier.name) || 'Unranked';
-      var rr   = cur.rr !== undefined ? cur.rr : 0;
+      kda = totalD > 0 ? ((totalK + totalA) / totalD).toFixed(2) : null;
+      const totalShots = totalHead + totalBody + totalLeg;
+      hsPercent = totalShots > 0 ? Math.round((totalHead / totalShots) * 100) : null;
+      logEvent(`[Track] KDA=${kda} HS=${hsPercent}% (${matchList.length} competitive)`);
+    }
 
-      // mmr-history + lifetime/matches en paralelo
-      Promise.all([
-        fetch(base + '/v1/mmr-history/' + region + '/' + name + '/' + tag, { headers: headers }).then(function(r){return r.json();}),
-        fetch(base + '/v1/lifetime/matches/' + region + '/' + name + '/' + tag + '?mode=competitive&size=20', { headers: headers }).then(function(r){return r.json();})
-      ]).then(function(results) {
-          var hist  = results[0];
-          var mData = results[1];
-
-          // mmr-history → W/L pips + win rate
-          var matches = [];
-          var wins = 0, played = 0;
-          var items = (hist && hist.data) || [];
-          if (!Array.isArray(items)) items = [];
-          items.slice(0, 20).forEach(function (m) {
-            var change = m.mmr_change_to_last_game !== undefined ? m.mmr_change_to_last_game
-                       : m.last_mmr_change !== undefined ? m.last_mmr_change : null;
-            if (change === null) return;
-            var w = change > 0 ? 'W' : 'L';
-            if (matches.length < 8) matches.push(w);
-            wins += (w === 'W' ? 1 : 0);
-            played += 1;
-          });
-          var winRate = played > 0 ? Math.round((wins / played) * 100) : null;
-
-          // lifetime/matches → KDA + HS%
-          var kda = null, hsPercent = null;
-          var matchList = (mData && mData.data) || [];
-          if (Array.isArray(matchList) && matchList.length > 0) {
-            var totalK=0, totalD=0, totalA=0, totalHead=0, totalBody=0, totalLeg=0;
-            matchList.forEach(function(m) {
-              var s = m.stats || {};
-              totalK += (s.kills  || 0);
-              totalD += (s.deaths || 0);
-              totalA += (s.assists || 0);
-              var shots = s.shots || {};
-              totalHead += (shots.head || 0);
-              totalBody += (shots.body || 0);
-              totalLeg  += (shots.leg  || 0);
-            });
-            kda = totalD > 0 ? ((totalK + totalA) / totalD).toFixed(2) : null;
-            var totalShots = totalHead + totalBody + totalLeg;
-            hsPercent = totalShots > 0 ? Math.round((totalHead / totalShots) * 100) : null;
-            logEvent('[Track] KDA=' + kda + ' HS=' + hsPercent + '% (' + matchList.length + ' competitive)');
-          }
-
-          logEvent('[Track] historial: ' + played + ' partidas, WR ' + winRate + '%');
-          cb({ player: riotId, tier: tier, rr: rr, region: region,
-               winRate: winRate, recentMatches: matches, kda: kda, hsPercent: hsPercent });
-        })
-        .catch(function () {
-          cb({ player: riotId, tier: tier, rr: rr, region: region });
-        });
-    })
-    .catch(function (e) { cb(null, 'fetch error: ' + e.message); });
+    logEvent(`[Track] historial: ${played} partidas, WR ${winRate}%`);
+    return { player: riotId, tier, rr, region, winRate, recentMatches: matches, kda, hsPercent };
+  } catch (_) {
+    return { player: riotId, tier, rr, region };
+  }
 }
 
-document.getElementById('valorant-input').addEventListener('keydown', function (e) {
+document.getElementById('valorant-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') fetchAndShow();
 });
 
-function fetchAndShow() {
-  var val    = document.getElementById('valorant-input').value.trim();
-  var region = document.getElementById('rank-region-select').value;
+async function fetchAndShow() {
+  const val    = document.getElementById('valorant-input').value.trim();
+  const region = document.getElementById('rank-region-select').value;
   if (!val) return;
   document.getElementById('rank-result').style.display = 'none';
-  logEvent('[Track] buscando ' + val + ' en ' + region.toUpperCase() + '...');
-  fetchRankFromPanel(val, region, function (result, err) {
-    if (!result) { logEvent('[Track] Error: ' + err); return; }
+  logEvent(`[Track] buscando ${val} en ${region.toUpperCase()}...`);
+  try {
+    const result = await fetchRankFromPanel(val, region);
     renderRankResult(result);
-    logEvent('[Track] ' + result.player + ' = ' + result.tier + ' ' + result.rr + 'RR'
-      + (result.winRate !== null && result.winRate !== undefined ? ' WR:' + result.winRate + '%' : ''));
+    logEvent(`[Track] ${result.player} = ${result.tier} ${result.rr}RR` +
+      (result.winRate != null ? ` WR:${result.winRate}%` : ''));
     call('Show.RankBroadcast', {
       player:        result.player,
       tier:          result.tier,
       rr:            String(result.rr),
-      winRate:       result.winRate    != null ? String(result.winRate)    : '',
+      winRate:       result.winRate   != null ? String(result.winRate)   : '',
       recentMatches: (result.recentMatches || []).join(','),
-      kda:           result.kda        != null ? String(result.kda)        : '',
-      hsPercent:     result.hsPercent  != null ? String(result.hsPercent)  : '',
+      kda:           result.kda       != null ? String(result.kda)       : '',
+      hsPercent:     result.hsPercent != null ? String(result.hsPercent) : '',
     });
-  });
+  } catch (e) {
+    logEvent(`[Track] Error: ${e.message}`);
+  }
 }
 
 /* Rank tracker manual */
-document.getElementById('btn-rank-manual').onclick = function () {
-  var tier   = document.getElementById('rank-manual-tier').value.trim();
-  var rr     = parseInt(document.getElementById('rank-manual-rr').value, 10) || 0;
-  var player = document.getElementById('valorant-input').value.trim() || activePlayer || '—';
+document.getElementById('btn-rank-manual').onclick = () => {
+  const tier   = document.getElementById('rank-manual-tier').value.trim();
+  const rr     = parseInt(document.getElementById('rank-manual-rr').value, 10) || 0;
+  const player = document.getElementById('valorant-input').value.trim() || activePlayer || '—';
   if (!tier) return;
-  renderRankResult({ player: player, tier: tier, rr: rr });
-  call('Show.RankBroadcast', { player: player, tier: tier, rr: String(rr) });
+  renderRankResult({ player, tier, rr });
+  call('Show.RankBroadcast', { player, tier, rr: String(rr) });
 };
 
 document.getElementById('btn-track-rank').onclick = fetchAndShow;
 
 // API key persistence
-(function () {
-  var saved = localStorage.getItem('henrikApiKey') || '';
-  if (saved) document.getElementById('henrik-key-input').placeholder = 'Key guardada ✓';
+(() => {
+  if (localStorage.getItem('henrikApiKey')) {
+    document.getElementById('henrik-key-input').placeholder = 'Key guardada ✓';
+  }
 })();
-document.getElementById('btn-henrik-key-save').onclick = function () {
-  var key = document.getElementById('henrik-key-input').value.trim();
+document.getElementById('btn-henrik-key-save').onclick = () => {
+  const key = document.getElementById('henrik-key-input').value.trim();
   if (!key) return;
   localStorage.setItem('henrikApiKey', key);
-  document.getElementById('henrik-key-input').value = '';
+  document.getElementById('henrik-key-input').value       = '';
   document.getElementById('henrik-key-input').placeholder = 'Key guardada ✓';
   logEvent('[Track] API key actualizada');
 };
 
-document.getElementById('btn-rank-hide').onclick = function () {
-  document.getElementById('rank-result').style.display = 'none';
-  call('Show.RankHide');
-};
-document.getElementById('btn-scene-trivia').onclick  = function () { call('Show.SwitchScene.Trivia'); };
-document.getElementById('btn-scene-hottake').onclick = function () { call('Show.SwitchScene.HotTake'); };
-document.getElementById('btn-scene-hostsolo').onclick = function () { call('Show.SwitchScene.HostSolo'); };
-document.getElementById('btn-scene-brb').onclick      = function () { call('Show.SwitchScene.BRB'); };
-document.getElementById('btn-discord-golive').onclick = function () { call('Infra.Discord.PostGoLive'); };
+document.getElementById('btn-rank-hide').onclick      = () => { document.getElementById('rank-result').style.display = 'none'; call('Show.RankHide'); };
+document.getElementById('btn-scene-trivia').onclick   = () => { call('Show.SwitchScene.Trivia'); };
+document.getElementById('btn-scene-hottake').onclick  = () => { call('Show.SwitchScene.HotTake'); };
+document.getElementById('btn-scene-hostsolo').onclick = () => { call('Show.SwitchScene.HostSolo'); };
+document.getElementById('btn-scene-brb').onclick      = () => { call('Show.SwitchScene.BRB'); };
+document.getElementById('btn-discord-golive').onclick = () => { call('Infra.Discord.PostGoLive'); };
 
 /* Trivia */
-document.getElementById('btn-trivia-start').onclick    = function () {
+document.getElementById('btn-trivia-start').onclick    = () => {
   document.getElementById('btn-life-5050').disabled = false;
   call('Trivia.Start', activePlayer ? { playerName: activePlayer } : {});
 };
-document.getElementById('btn-trivia-next').onclick     = function () { call('Trivia.NextQuestion'); };
-document.getElementById('btn-trivia-reveal').onclick   = function () { triviaSetRevealed(true); call('Trivia.RevealAnswer'); };
-document.getElementById('btn-trivia-walkaway').onclick = function () { call('Trivia.WalkAway'); };
-document.getElementById('btn-trivia-gameover').onclick = function () { call('Trivia.GameOver'); };
-document.getElementById('btn-life-5050').onclick    = function () {
-  this.disabled = true;
-  call('Trivia.Lifeline.FiftyFifty');
-};
-document.getElementById('btn-life-audience').onclick = function () { call('Trivia.Lifeline.AskAudience'); };
-document.getElementById('btn-life-phone').onclick    = function () { call('Trivia.Lifeline.PhoneFriend'); };
+document.getElementById('btn-trivia-next').onclick     = () => { call('Trivia.NextQuestion'); };
+document.getElementById('btn-trivia-reveal').onclick   = () => { triviaSetRevealed(true); call('Trivia.RevealAnswer'); };
+document.getElementById('btn-trivia-walkaway').onclick = () => { call('Trivia.WalkAway'); };
+document.getElementById('btn-trivia-gameover').onclick = () => { call('Trivia.GameOver'); };
+document.getElementById('btn-life-5050').onclick       = function () { this.disabled = true; call('Trivia.Lifeline.FiftyFifty'); };
+document.getElementById('btn-life-audience').onclick   = () => { call('Trivia.Lifeline.AskAudience'); };
+document.getElementById('btn-life-phone').onclick      = () => { call('Trivia.Lifeline.PhoneFriend'); };
 
-document.querySelectorAll('[data-letter]').forEach(function (btn) {
-  btn.onclick = function () {
+document.querySelectorAll('[data-letter]').forEach(btn => {
+  btn.onclick = () => {
     triviaLockMini(btn.dataset.letter);
     call('Trivia.LockAnswer', { letter: btn.dataset.letter });
   };
 });
 
 /* Timer */
-var timerSeconds = 30;
+let timerSeconds = 30;
 function updateTimerDisplay() {
   document.getElementById('timer-display').textContent = timerSeconds;
 }
-document.getElementById('btn-timer-start').onclick = function () { call('Timer.Start'); };
-document.getElementById('btn-timer-stop').onclick  = function () { call('Timer.Stop'); };
-document.getElementById('btn-timer-reset').onclick = function () {
-  call('Timer.Reset');
-};
-document.querySelectorAll('[data-timer-delta]').forEach(function (btn) {
-  btn.onclick = function () {
-    var delta = parseInt(btn.dataset.timerDelta, 10);
-    timerSeconds = Math.max(5, timerSeconds + delta);
+document.getElementById('btn-timer-start').onclick = () => { call('Timer.Start'); };
+document.getElementById('btn-timer-stop').onclick  = () => { call('Timer.Stop'); };
+document.getElementById('btn-timer-reset').onclick = () => { call('Timer.Reset'); };
+document.querySelectorAll('[data-timer-delta]').forEach(btn => {
+  btn.onclick = () => {
+    timerSeconds = Math.max(5, timerSeconds + parseInt(btn.dataset.timerDelta, 10));
     updateTimerDisplay();
     call('Timer.Set', { seconds: timerSeconds });
   };
 });
 
 /* Picantes — botones de cantidad */
-document.querySelectorAll('[data-amount]').forEach(function (btn) {
-  btn.onclick = function () {
-    var amount = parseInt(btn.dataset.amount, 10);
+document.querySelectorAll('[data-amount]').forEach(btn => {
+  btn.onclick = () => {
     call('Picantes.QuickAward', {
-      amount: String(amount),
+      amount:       String(parseInt(btn.dataset.amount, 10)),
       targetPlayer: activePlayer,
     });
   };
 });
 
-document.getElementById('btn-broadcast-lb').onclick = function () {
-  call('Picantes.BroadcastLeaderboard');
-};
+document.getElementById('btn-broadcast-lb').onclick = () => { call('Picantes.BroadcastLeaderboard'); };
 
-document.getElementById('btn-award-manual').onclick = function () {
-  var user   = document.getElementById('award-user-input').value.trim();
-  var amount = document.getElementById('award-amount-input').value.trim();
+document.getElementById('btn-award-manual').onclick = () => {
+  const user   = document.getElementById('award-user-input').value.trim();
+  const amount = document.getElementById('award-amount-input').value.trim();
   if (!user || !amount) return;
-  call('Picantes.Award', { user: user, amount: amount });
+  call('Picantes.Award', { user, amount });
 };
 
 /* Mood */
-document.getElementById('btn-mood-picante').onclick  = function () { call('Mood.Picante'); };
-document.getElementById('btn-mood-chill').onclick    = function () { call('Mood.Chill'); };
-document.getElementById('btn-mood-redalert').onclick = function () { call('Mood.RedAlert'); };
+document.getElementById('btn-mood-picante').onclick  = () => { call('Mood.Picante'); };
+document.getElementById('btn-mood-chill').onclick    = () => { call('Mood.Chill'); };
+document.getElementById('btn-mood-redalert').onclick = () => { call('Mood.RedAlert'); };
 
 /* Wheel */
-document.getElementById('btn-wheel-spin').onclick = function () {
-  var n = document.getElementById('wheel-count').value || '1';
-  call('Wheel.Spin', { input0: n });
+document.getElementById('btn-wheel-spin').onclick = () => {
+  call('Wheel.Spin', { input0: document.getElementById('wheel-count').value || '1' });
 };
 
 /* ── Wheel opciones personalizadas ─────────────────────────────────── */
-var wheelOpts = JSON.parse(localStorage.getItem('wheelOpts') || '[]');
+let wheelOpts = JSON.parse(localStorage.getItem('wheelOpts') || '[]');
 
 function renderWheelOpts() {
-  var ul = document.getElementById('wheel-opt-list');
+  const ul = document.getElementById('wheel-opt-list');
   ul.innerHTML = '';
   if (wheelOpts.length === 0) {
     ul.innerHTML = '<li style="color:var(--muted)">— usando agentes default —</li>';
     return;
   }
-  wheelOpts.forEach(function (name, i) {
-    var li = document.createElement('li');
+  wheelOpts.forEach((name, i) => {
+    const li = document.createElement('li');
     li.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid var(--border)';
-    li.innerHTML = '<span>' + name + '</span><button class="btn" style="padding:2px 7px;font-size:10px">✕</button>';
-    li.querySelector('button').onclick = function () {
+    li.innerHTML = `<span>${name}</span><button class="btn" style="padding:2px 7px;font-size:10px">✕</button>`;
+    li.querySelector('button').onclick = () => {
       wheelOpts.splice(i, 1);
       localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
       renderWheelOpts();
@@ -1004,21 +968,16 @@ function renderWheelOpts() {
 }
 renderWheelOpts();
 
-document.getElementById('btn-wheel-add-opt').onclick = function () {
-  var val = document.getElementById('wheel-opt-input').value.trim();
+document.getElementById('btn-wheel-add-opt').onclick = () => {
+  const val = document.getElementById('wheel-opt-input').value.trim();
   if (!val) return;
   wheelOpts.push(val);
   localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
   document.getElementById('wheel-opt-input').value = '';
   renderWheelOpts();
 };
-
-document.getElementById('btn-wheel-save-opts').onclick = function () {
-  var opts = wheelOpts.join(',');
-  call('Wheel.SetOptions', { options: opts });
-};
-
-document.getElementById('btn-wheel-reset-opts').onclick = function () {
+document.getElementById('btn-wheel-save-opts').onclick  = () => { call('Wheel.SetOptions', { options: wheelOpts.join(',') }); };
+document.getElementById('btn-wheel-reset-opts').onclick = () => {
   wheelOpts = [];
   localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
   renderWheelOpts();
@@ -1026,26 +985,26 @@ document.getElementById('btn-wheel-reset-opts').onclick = function () {
 };
 
 /* ── Overlays toggle ────────────────────────────────────────────────── */
-var defaultOverlaySources = ['Scoreboard', 'Alerts', 'Wheel'];
-var overlaySources = JSON.parse(localStorage.getItem('overlaySources') || JSON.stringify(defaultOverlaySources));
+const defaultOverlaySources = ['Scoreboard', 'Alerts', 'Wheel'];
+let overlaySources = JSON.parse(localStorage.getItem('overlaySources') || JSON.stringify(defaultOverlaySources));
 
 function renderOverlayToggles() {
-  var container = document.getElementById('overlay-toggles');
+  const container = document.getElementById('overlay-toggles');
   container.innerHTML = '';
-  overlaySources.forEach(function (src) {
-    var row = document.createElement('div');
+  overlaySources.forEach(src => {
+    const row = document.createElement('div');
     row.style.cssText = 'display:flex;gap:6px;align-items:center';
-    var btn = document.createElement('button');
-    btn.className = 'btn';
-    btn.style.flex = '1';
-    btn.textContent = '👁️ ' + src;
-    btn.onclick = function () { call('Show.ToggleSource', { source: src }); };
-    var del = document.createElement('button');
-    del.className = 'btn btn-danger';
+    const btn = document.createElement('button');
+    btn.className    = 'btn';
+    btn.style.flex   = '1';
+    btn.textContent  = `👁️ ${src}`;
+    btn.onclick      = () => { call('Show.ToggleSource', { source: src }); };
+    const del = document.createElement('button');
+    del.className    = 'btn btn-danger';
     del.style.cssText = 'padding:4px 8px;font-size:10px';
-    del.textContent = '✕';
-    del.onclick = function () {
-      overlaySources = overlaySources.filter(function (s) { return s !== src; });
+    del.textContent  = '✕';
+    del.onclick      = () => {
+      overlaySources = overlaySources.filter(s => s !== src);
       localStorage.setItem('overlaySources', JSON.stringify(overlaySources));
       renderOverlayToggles();
     };
@@ -1056,8 +1015,8 @@ function renderOverlayToggles() {
 }
 renderOverlayToggles();
 
-document.getElementById('btn-overlay-add').onclick = function () {
-  var val = document.getElementById('overlay-source-input').value.trim();
+document.getElementById('btn-overlay-add').onclick = () => {
+  const val = document.getElementById('overlay-source-input').value.trim();
   if (!val || overlaySources.includes(val)) return;
   overlaySources.push(val);
   localStorage.setItem('overlaySources', JSON.stringify(overlaySources));
@@ -1066,14 +1025,12 @@ document.getElementById('btn-overlay-add').onclick = function () {
 };
 
 /* Vote */
-document.getElementById('btn-vote-open').onclick = function () {
-  var opts = document.getElementById('vote-options-input').value.trim();
+document.getElementById('btn-vote-open').onclick  = () => {
+  const opts = document.getElementById('vote-options-input').value.trim();
   if (!opts) return;
   call('Vote.Open', { options: opts });
 };
-document.getElementById('btn-vote-close').onclick = function () {
-  call('Vote.Close');
-};
+document.getElementById('btn-vote-close').onclick = () => { call('Vote.Close'); };
 </script>
 </body>
 </html>

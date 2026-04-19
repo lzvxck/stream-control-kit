@@ -9,52 +9,50 @@
  *   trivia.game_over            → reset visual
  */
 
-var LADDER_LABELS = [
+const LADDER_LABELS = [
   '100', '200', '300', '500', '1.000',
   '2.000', '4.000', '8.000', '16.000', '32.000',
-  '64.000', '125.000', '250.000', '500.000', '1.000.000'
+  '64.000', '125.000', '250.000', '500.000', '1.000.000',
 ];
-var SAFETY_RUNGS = [5, 10];
+const SAFETY_RUNGS = [5, 10];
 
-var state = {
-  qNum:     0,
-  winnings: 0,
+const state = {
+  qNum:        0,
+  winnings:    0,
   prizeLadder: LADDER_LABELS,
 };
 
 /* ── Escalera ─────────────────────────────────────────────────────────── */
 function buildLadder(ladder) {
-  var el = document.getElementById('ladder');
+  const el     = document.getElementById('ladder');
   el.innerHTML = '';
-  var labels = ladder || LADDER_LABELS;
-  labels.forEach(function (pts, i) {
-    var n = i + 1;
-    var div = document.createElement('div');
-    div.className = 'rung' + (SAFETY_RUNGS.includes(n) ? ' safety' : '');
-    div.id = 'rung-' + n;
+  const labels = ladder || LADDER_LABELS;
+  labels.forEach((pts, i) => {
+    const n   = i + 1;
+    const div = document.createElement('div');
+    div.className = `rung${SAFETY_RUNGS.includes(n) ? ' safety' : ''}`;
+    div.id        = `rung-${n}`;
     div.innerHTML =
-      '<span class="rung-n">Q' + n + '</span>' +
-      '<span class="rung-pts">' + (typeof pts === 'number' ? pts.toLocaleString('es-ES') : pts) + ' 🌶️</span>';
+      `<span class="rung-n">Q${n}</span>` +
+      `<span class="rung-pts">${typeof pts === 'number' ? pts.toLocaleString('es-ES') : pts} 🌶️</span>`;
     el.appendChild(div);
   });
 }
 
 function highlightRung(qNum) {
-  document.querySelectorAll('.rung').forEach(function (r) {
-    r.classList.remove('current');
-  });
-  var el = document.getElementById('rung-' + qNum);
+  document.querySelectorAll('.rung').forEach(r => r.classList.remove('current'));
+  const el = document.getElementById(`rung-${qNum}`);
   if (el) el.classList.add('current');
 }
 
 function markPassedRung(qNum) {
-  var el = document.getElementById('rung-' + qNum);
+  const el = document.getElementById(`rung-${qNum}`);
   if (el) { el.classList.remove('current'); el.classList.add('passed'); }
 }
 
 /* ── Opciones ─────────────────────────────────────────────────────────── */
 function resetOptions() {
-  document.querySelectorAll('.opt').forEach(function (btn) {
+  document.querySelectorAll('.opt').forEach(btn => {
     btn.className = 'opt';
     btn.querySelector('.opt-text').textContent = '';
   });
@@ -66,16 +64,15 @@ function renderQuestion(payload) {
   state.qNum = payload.qNum || state.qNum + 1;
   resetOptions();
 
-  var qEl = document.getElementById('question-text');
+  const qEl = document.getElementById('question-text');
   scrambleText(qEl, payload.question || '', 400);
   document.getElementById('difficulty-badge').textContent =
-    'Pregunta ' + state.qNum + ' · Dificultad ' + (payload.difficulty || '?');
+    `Pregunta ${state.qNum} · Dificultad ${payload.difficulty || '?'}`;
 
-  ['A', 'B', 'C', 'D'].forEach(function (l) {
-    var btn = document.querySelector('.opt[data-letter="' + l + '"]');
+  ['A', 'B', 'C', 'D'].forEach(l => {
+    const btn = document.querySelector(`.opt[data-letter="${l}"]`);
     if (btn && payload.options && payload.options[l] !== undefined) {
-      var optEl = btn.querySelector('.opt-text');
-      scrambleText(optEl, payload.options[l], 350);
+      scrambleText(btn.querySelector('.opt-text'), payload.options[l], 350);
     }
   });
 
@@ -83,23 +80,19 @@ function renderQuestion(payload) {
 }
 
 function lockAnswer(letter) {
-  document.querySelectorAll('.opt').forEach(function (btn) {
-    btn.classList.remove('locked');
-  });
-  var btn = document.querySelector('.opt[data-letter="' + letter + '"]');
+  document.querySelectorAll('.opt').forEach(btn => btn.classList.remove('locked'));
+  const btn = document.querySelector(`.opt[data-letter="${letter}"]`);
   if (btn) btn.classList.add('locked');
 }
 
 function revealAnswer(payload) {
-  var correct = payload.correct;
-  var chosen  = payload.chosen;
-  var isCorrect = payload.isCorrect;
+  const { correct, chosen, isCorrect } = payload;
 
-  var correctBtn = document.querySelector('.opt[data-letter="' + correct + '"]');
+  const correctBtn = document.querySelector(`.opt[data-letter="${correct}"]`);
   if (correctBtn) { correctBtn.classList.remove('locked', 'dimmed'); correctBtn.classList.add('correct'); }
 
   if (chosen && !isCorrect) {
-    var wrongBtn = document.querySelector('.opt[data-letter="' + chosen + '"]');
+    const wrongBtn = document.querySelector(`.opt[data-letter="${chosen}"]`);
     if (wrongBtn) { wrongBtn.classList.remove('locked'); wrongBtn.classList.add('wrong'); }
   }
 
@@ -111,40 +104,39 @@ function revealAnswer(payload) {
 
 /* ── Lifelines ────────────────────────────────────────────────────────── */
 function fiftyFifty(remove) {
-  (remove || []).forEach(function (l) {
-    var btn = document.querySelector('.opt[data-letter="' + l + '"]');
+  (remove || []).forEach(l => {
+    const btn = document.querySelector(`.opt[data-letter="${l}"]`);
     if (btn) btn.classList.add('dimmed');
   });
   markLifelineUsed('life-5050');
 }
 
 function showAudienceBars(distribution) {
-  var total = Object.values(distribution).reduce(function (a, b) { return a + b; }, 0) || 1;
-  ['A', 'B', 'C', 'D'].forEach(function (l) {
-    var row = document.querySelector('.abar-row[data-letter="' + l + '"]');
+  const total = Object.values(distribution).reduce((a, b) => a + b, 0) || 1;
+  ['A', 'B', 'C', 'D'].forEach(l => {
+    const row = document.querySelector(`.abar-row[data-letter="${l}"]`);
     if (!row) return;
-    var pct = Math.round(((distribution[l] || 0) / total) * 100);
-    row.querySelector('.abar-fill').style.width = pct + '%';
-    row.querySelector('.abar-pct').textContent = pct + '%';
+    const pct = Math.round(((distribution[l] || 0) / total) * 100);
+    row.querySelector('.abar-fill').style.width   = `${pct}%`;
+    row.querySelector('.abar-pct').textContent    = `${pct}%`;
   });
   document.getElementById('audience-bars').classList.remove('hidden');
   markLifelineUsed('life-audience');
 }
 
 function resetAudienceBars() {
-  ['A', 'B', 'C', 'D'].forEach(function (l) {
-    var row = document.querySelector('.abar-row[data-letter="' + l + '"]');
+  ['A', 'B', 'C', 'D'].forEach(l => {
+    const row = document.querySelector(`.abar-row[data-letter="${l}"]`);
     if (!row) return;
     row.querySelector('.abar-fill').style.width = '0%';
-    row.querySelector('.abar-pct').textContent = '0%';
+    row.querySelector('.abar-pct').textContent  = '0%';
   });
 }
 
 function markLifelineUsed(id) {
-  var el = document.getElementById(id);
+  const el = document.getElementById(id);
   if (el) el.classList.add('used');
 }
-
 
 /* ── Confetti ─────────────────────────────────────────────────────────── */
 function fireConfetti() {
@@ -154,61 +146,58 @@ function fireConfetti() {
 
 function fireHeavyConfetti() {
   if (typeof confetti === 'undefined') return;
-  var count = 0;
-  var interval = setInterval(function () {
+  let count = 0;
+  const interval = setInterval(() => {
     confetti({ particleCount: 80, spread: 120, origin: { y: 0.5, x: Math.random() }, colors: ['#FF4655','#00E5FF','#FFCF40'] });
-    count++;
-    if (count >= 5) clearInterval(interval);
+    if (++count >= 5) clearInterval(interval);
   }, 250);
 }
 
 /* ── Game start / over ────────────────────────────────────────────────── */
 function gameStart(payload) {
-  var stage = document.getElementById('stage');
+  const stage = document.getElementById('stage');
   stage.classList.remove('hidden');
 
-  document.getElementById('player-name').textContent = (payload.playerName || 'Jugador').toUpperCase();
+  document.getElementById('player-name').textContent    = (payload.playerName || 'Jugador').toUpperCase();
   document.getElementById('winnings-display').textContent = '0 🌶️';
-  state.qNum = 0;
+  state.qNum     = 0;
   state.winnings = 0;
 
   buildLadder(payload.prizeLadder);
 
-  document.querySelectorAll('.lifeline').forEach(function (l) {
-    l.classList.remove('used');
-  });
+  document.querySelectorAll('.lifeline').forEach(l => l.classList.remove('used'));
   resetOptions();
-  document.getElementById('question-text').textContent = '';
+  document.getElementById('question-text').textContent  = '';
   document.getElementById('difficulty-badge').textContent = '';
 }
 
 function gameOver(payload) {
   if (payload && payload.winnings > 0) {
-    document.getElementById('winnings-display').textContent = payload.winnings.toLocaleString('es-ES') + ' 🌶️';
+    document.getElementById('winnings-display').textContent = `${payload.winnings.toLocaleString('es-ES')} 🌶️`;
     if (payload.winnings >= 1000000) fireHeavyConfetti();
   }
-  setTimeout(function () {
+  setTimeout(() => {
     document.getElementById('stage').classList.add('hidden');
   }, 8000);
 }
 
 /* ── Text scramble ────────────────────────────────────────────────────── */
-var SCRAMBLE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
+const SCRAMBLE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
+
 function scrambleText(el, finalText, duration) {
-  // Cancel any previous scramble on THIS element specifically
   if (el._scrambleIv) clearInterval(el._scrambleIv);
 
-  var len = finalText.length;
-  var start = Date.now();
-  var revealPerMs = len / duration;
+  const len        = finalText.length;
+  const start      = Date.now();
+  const revealPerMs = len / duration;
 
-  el._scrambleIv = setInterval(function () {
-    var elapsed  = Date.now() - start;
-    var resolved = Math.min(Math.floor(elapsed * revealPerMs), len);
+  el._scrambleIv = setInterval(() => {
+    const elapsed  = Date.now() - start;
+    const resolved = Math.min(Math.floor(elapsed * revealPerMs), len);
 
-    var out = finalText.slice(0, resolved);
-    for (var i = resolved; i < len; i++) {
-      var ch = finalText[i];
+    let out = finalText.slice(0, resolved);
+    for (let i = resolved; i < len; i++) {
+      const ch = finalText[i];
       out += (ch === ' ' || ch === '¿' || ch === '?' || ch === ',' || ch === '.')
         ? ch
         : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
@@ -224,25 +213,28 @@ function scrambleText(el, finalText, duration) {
 }
 
 /* ── Indicador de conexión ─────────────────────────────────────────── */
-var _wsDot = (function () {
-  var d = document.createElement('div');
+const _wsDot = (() => {
+  const d = document.createElement('div');
   d.style.cssText = 'position:fixed;bottom:8px;right:8px;width:6px;height:6px;border-radius:50%;background:#f55;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;';
   document.body.appendChild(d);
-  return { ok: function () { d.style.opacity = '0'; }, fail: function () { d.style.opacity = '0.75'; } };
+  return {
+    ok:   () => { d.style.opacity = '0'; },
+    fail: () => { d.style.opacity = '0.75'; },
+  };
 })();
 
 /* ── Cliente SB ───────────────────────────────────────────────────────── */
-var client = new StreamerbotClient({
-  host: '127.0.0.1',
-  port: 8080,
-  password: null,
+const client = new StreamerbotClient({
+  host:          '127.0.0.1',
+  port:          8080,
+  password:      null,
   autoSubscribe: { General: ['Custom'] },
-  onConnect: function () { _wsDot.ok(); },
-  onDisconnect: function () { _wsDot.fail(); },
+  onConnect:    () => { _wsDot.ok(); },
+  onDisconnect: () => { _wsDot.fail(); },
 });
 
-client.on('General.Custom', function (msg) {
-  var data = msg.data;
+client.on('General.Custom', msg => {
+  const data = msg.data;
   if (!data || !data.event) return;
 
   switch (data.event) {
@@ -260,7 +252,7 @@ client.on('General.Custom', function (msg) {
       if (data.payload && data.payload.isCorrect && data.payload.winnings !== undefined) {
         state.winnings = data.payload.winnings;
         document.getElementById('winnings-display').textContent =
-          data.payload.winnings.toLocaleString('es-ES') + ' 🌶️';
+          `${data.payload.winnings.toLocaleString('es-ES')} 🌶️`;
       }
       break;
     case 'trivia.lifeline.fifty_fifty':
