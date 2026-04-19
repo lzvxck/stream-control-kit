@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wheel — Spike Picante</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 600px;
+      height: 600px;
+    }
+    #wheel-wrap {
+      position: relative;
+      width: 520px;
+      height: 520px;
+    }
+    #wheel-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(255,255,255,0.08);
+    }
+    /* Puntero */
+    #pointer {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 28px solid #ffffff;
+      filter: drop-shadow(0 2px 6px rgba(255,255,255,0.35));
+    }
+    /* Banner ganador */
+    #winner-banner {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.72);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      padding: 14px 28px;
+      text-align: center;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      color: #ededed;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      min-width: 200px;
+      backdrop-filter: blur(12px);
+    }
+    #winner-banner.visible { opacity: 1; }
+    #winner-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(237,237,237,0.45); }
+    #winner-name  { font-size: 26px; font-weight: 900; color: #fff; margin-top: 4px; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
+  <div id="wheel-wrap">
+    <canvas id="wheel-canvas" width="520" height="520"></canvas>
+    <div id="pointer"></div>
+  </div>
+  <div id="winner-banner">
+    <div id="winner-label">Agente seleccionado</div>
+    <div id="winner-name"></div>
+  </div>
+
+  <script src="vendor/streamerbot-client.js"></script>
+  <script src="wheel.js"></script>
+</body>
+</html>

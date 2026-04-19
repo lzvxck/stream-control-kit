@@ -1,0 +1,122 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: transparent;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #ededed;
+}
+
+/* ── Contenedor de cola ──────────────────────────────────────────────── */
+#alerts-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+/* ── Tarjeta base ────────────────────────────────────────────────────── */
+.alert-card {
+  border-radius: 6px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-left: 2px solid transparent;
+  backdrop-filter: blur(12px);
+  will-change: transform, opacity;
+}
+
+/* ── Tiers ───────────────────────────────────────────────────────────── */
+.alert-card.tier-subtle {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 2px solid rgba(255,255,255,0.35);
+}
+
+.alert-card.tier-medium {
+  background: rgba(0,0,0,0.65);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-left: 2px solid rgba(255,255,255,0.65);
+  box-shadow: 0 0 20px rgba(255,255,255,0.06);
+}
+
+.alert-card.tier-big {
+  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-left: 2px solid #fff;
+  box-shadow: 0 0 32px rgba(255,255,255,0.1);
+  padding: 18px 22px;
+}
+
+/* Takeover ocupa pantalla completa */
+.alert-card.tier-takeover {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  border-radius: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+  background: rgba(0,0,0,0.88);
+  border-left: none;
+  border-top: 2px solid rgba(255,255,255,0.8);
+  box-shadow: none;
+  padding: 40px;
+  z-index: 999;
+}
+
+/* ── Ícono ───────────────────────────────────────────────────────────── */
+.alert-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.tier-big .alert-icon,
+.tier-takeover .alert-icon { font-size: 52px; }
+
+/* ── Contenido ───────────────────────────────────────────────────────── */
+.alert-body { flex: 1; min-width: 0; }
+
+.alert-user {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tier-big .alert-user,
+.tier-takeover .alert-user {
+  font-size: 22px;
+  color: #fff;
+}
+
+.alert-msg {
+  font-size: 12px;
+  color: rgba(237,237,237,0.6);
+  margin-top: 3px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.tier-big .alert-msg,
+.tier-takeover .alert-msg { font-size: 15px; color: rgba(237,237,237,0.85); }
+
+.alert-meta {
+  font-size: 11px;
+  color: rgba(237,237,237,0.7);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.tier-takeover .alert-meta { font-size: 18px; color: #fff; }

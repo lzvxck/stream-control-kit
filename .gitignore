@@ -1,0 +1,18 @@
+# Audio — no subir SFX (peso + derechos)
+assets/sfx/*
+!assets/sfx/.gitkeep
+
+# Datos sensibles
+*.env
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+*.code-workspace
+
+# Claude
+.claude/

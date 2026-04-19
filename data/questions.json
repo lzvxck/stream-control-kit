@@ -1,0 +1,502 @@
+{
+  "version": "2026.04",
+  "ladder": [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000],
+  "safetyRungs": [5, 10],
+  "questions": [
+    {
+      "id": 1,
+      "difficulty": 1,
+      "category": "agents",
+      "question": "¿Qué agente usa Bladestorm como ultimate, lanzando cuchillos de energía?",
+      "options": { "A": "Jett", "B": "Phoenix", "C": "Reyna", "D": "Yoru" },
+      "correct": "A",
+      "explanation": "Bladestorm es el ultimate de Jett: lanza cuchillos con precisión perfecta que se recargan al matar."
+    },
+    {
+      "id": 2,
+      "difficulty": 1,
+      "category": "agents",
+      "question": "¿Qué agente puede crear paredes de fuego y curarse a sí mismo con Blaze?",
+      "options": { "A": "Brimstone", "B": "Phoenix", "C": "Viper", "D": "Sage" },
+      "correct": "B",
+      "explanation": "Phoenix tiene Blaze (muro de fuego), Curveball (flash), Hot Hands (molotov que lo cura) y Run It Back (ultimate de reaparición)."
+    },
+    {
+      "id": 3,
+      "difficulty": 1,
+      "category": "agents",
+      "question": "¿Qué agente puede curar a aliados con Barrier Orb y Healing Orb?",
+      "options": { "A": "Skye", "B": "Sage", "C": "Reyna", "D": "Clove" },
+      "correct": "B",
+      "explanation": "Sage es la sanadora principal de Valorant: Healing Orb cura aliados, Barrier Orb crea paredes sólidas."
+    },
+    {
+      "id": 4,
+      "difficulty": 1,
+      "category": "maps",
+      "question": "¿Qué mapa tiene teletransportadores que conectan A Main con B Garden?",
+      "options": { "A": "Split", "B": "Bind", "C": "Haven", "D": "Ascent" },
+      "correct": "B",
+      "explanation": "Bind es el único mapa sin mid tradicional, reemplazado por dos teletransportadores de un solo sentido."
+    },
+    {
+      "id": 5,
+      "difficulty": 1,
+      "category": "agents",
+      "question": "¿Cuántas habilidades tiene cada agente en Valorant (incluyendo el ultimate)?",
+      "options": { "A": "3", "B": "4", "C": "5", "D": "2" },
+      "correct": "B",
+      "explanation": "Cada agente tiene: 1 Signature (gratis o con costo reducido), 2 Basic (compradas), 1 Ultimate."
+    },
+    {
+      "id": 6,
+      "difficulty": 2,
+      "category": "agents",
+      "question": "¿Qué agente sentinela puede colocar trampas Nanoswarm en el suelo para defender sitios?",
+      "options": { "A": "Cypher", "B": "Killjoy", "C": "Chamber", "D": "Deadlock" },
+      "correct": "B",
+      "explanation": "Killjoy tiene Nanoswarm (trampa en suelo), Alarmbot, Turret y Lockdown como ultimate."
+    },
+    {
+      "id": 7,
+      "difficulty": 2,
+      "category": "maps",
+      "question": "¿Cuántos sitios de bomba tiene el mapa Haven?",
+      "options": { "A": "1", "B": "2", "C": "3", "D": "4" },
+      "correct": "C",
+      "explanation": "Haven es el único mapa de Valorant con tres sitios: A, B y C."
+    },
+    {
+      "id": 8,
+      "difficulty": 2,
+      "category": "agents",
+      "question": "¿Qué habilidad de Sova le permite disparar un dron de reconocimiento?",
+      "options": { "A": "Shock Bolt", "B": "Recon Bolt", "C": "Owl Drone", "D": "Hunter's Fury" },
+      "correct": "C",
+      "explanation": "Owl Drone es el dron teledirigido de Sova. Recon Bolt es la flecha de reconocimiento."
+    },
+    {
+      "id": 9,
+      "difficulty": 2,
+      "category": "economy",
+      "question": "¿Cuántos créditos cuesta una Vandal en Valorant?",
+      "options": { "A": "2400", "B": "2700", "C": "2900", "D": "3000" },
+      "correct": "C",
+      "explanation": "La Vandal cuesta 2900 créditos. La Phantom también cuesta 2900, haciendo el debate Vandal vs Phantom eterno."
+    },
+    {
+      "id": 10,
+      "difficulty": 3,
+      "category": "agents",
+      "question": "¿Qué agente controlador puede crear un campo oscuro con su ultimate Dark Cover?",
+      "options": { "A": "Viper", "B": "Omen", "C": "Astra", "D": "Harbor" },
+      "correct": "B",
+      "explanation": "Omen tiene Dark Cover (smokes), Shrouded Step (teleport corto), Paranoia (flash) y From the Shadows (teleport global)."
+    },
+    {
+      "id": 11,
+      "difficulty": 3,
+      "category": "agents",
+      "question": "¿Qué agente iniciador puede curar a sus aliados con la habilidad Regrowth?",
+      "options": { "A": "Breach", "B": "Gekko", "C": "Skye", "D": "Fade" },
+      "correct": "C",
+      "explanation": "Skye tiene Regrowth, una habilidad de curación por área única para un initiator."
+    },
+    {
+      "id": 12,
+      "difficulty": 3,
+      "category": "maps",
+      "question": "¿En qué mapa se encuentra el área conocida como 'Jardín' (Garden)?",
+      "options": { "A": "Bind", "B": "Haven", "C": "Pearl", "D": "Ascent" },
+      "correct": "A",
+      "explanation": "B Garden es la sala central-norte de Bind, accesible desde el teleportador de A Main."
+    },
+    {
+      "id": 13,
+      "difficulty": 3,
+      "category": "economy",
+      "question": "¿Cuál es el crédito máximo que un jugador puede acumular en Valorant?",
+      "options": { "A": "6000", "B": "8000", "C": "9000", "D": "12000" },
+      "correct": "C",
+      "explanation": "El límite de créditos en Valorant es 9000. Acumular más es imposible, incentiviando gastar en rounds de eco."
+    },
+    {
+      "id": 14,
+      "difficulty": 4,
+      "category": "agents",
+      "question": "¿Qué agente tiene la habilidad 'Gatecrash' que puede enviar un portal tethered?",
+      "options": { "A": "Neon", "B": "Yoru", "C": "Iso", "D": "Jett" },
+      "correct": "B",
+      "explanation": "Gatecrash es la habilidad de Yoru que envía un portal de teletransportación a distancia, creando confusión en el rival."
+    },
+    {
+      "id": 15,
+      "difficulty": 4,
+      "category": "mechanics",
+      "question": "¿Qué mecánica penaliza la precisión al disparar mientras te movés en Valorant?",
+      "options": { "A": "Recoil", "B": "Spread", "C": "Movement inaccuracy", "D": "Bullet drop" },
+      "correct": "C",
+      "explanation": "El Movement Inaccuracy es el sistema que ensancha el crosshair al moverse, penalizando disparar en movimiento."
+    },
+    {
+      "id": 16,
+      "difficulty": 4,
+      "category": "maps",
+      "question": "¿Qué mapa de Valorant está ambientado bajo el agua en una ciudad sumergida?",
+      "options": { "A": "Pearl", "B": "Abyss", "C": "Sunset", "D": "Lotus" },
+      "correct": "A",
+      "explanation": "Pearl está ambientado en una ciudad submarina portuguesa, parte del lore de Kingdom Corporation."
+    },
+    {
+      "id": 17,
+      "difficulty": 5,
+      "category": "agents",
+      "question": "¿Qué agente controlador puede 'recolectar' su cuerpo y reaparecer al activar su passive tras morir?",
+      "options": { "A": "Viper", "B": "Astra", "C": "Clove", "D": "Harbor" },
+      "correct": "C",
+      "explanation": "Clove es el primer agente controlador que puede activar habilidades post-muerte y tiene una mecánica de reaparición condicional."
+    },
+    {
+      "id": 18,
+      "difficulty": 5,
+      "category": "mechanics",
+      "question": "¿Cómo se llama la técnica de comprar armas de un aliado que muere en la ronda anterior?",
+      "options": { "A": "Economy buy", "B": "Save", "C": "Frag-or-die", "D": "Pick up" },
+      "correct": "B",
+      "explanation": "El 'save' es guardar la arma muriendo intencionalmente para que aliados la recojan al inicio de la siguiente ronda."
+    },
+    {
+      "id": 19,
+      "difficulty": 5,
+      "category": "lore",
+      "question": "¿Cómo se llama la organización antagonista que enfrenta a los Agentes de VALORANT Protocol?",
+      "options": { "A": "Omega Earth", "B": "Kingdom Corporation", "C": "The Array", "D": "Mirror Protocol" },
+      "correct": "B",
+      "explanation": "Kingdom Corporation es la mega-corporación que controla el Radianite y cuyas acciones son el centro del conflicto del lore."
+    },
+    {
+      "id": 20,
+      "difficulty": 5,
+      "category": "agents",
+      "question": "¿Qué rol tiene el agente Tejo en Valorant?",
+      "options": { "A": "Duelist", "B": "Sentinel", "C": "Initiator", "D": "Controller" },
+      "correct": "C",
+      "explanation": "Tejo es un Initiator añadido en 2025, especializado en información y entrada con habilidades de largo alcance."
+    },
+    {
+      "id": 21,
+      "difficulty": 6,
+      "category": "mechanics",
+      "question": "¿Cuánto tiempo tarda la Spike (bomba) en explotar una vez activada?",
+      "options": { "A": "35 segundos", "B": "45 segundos", "C": "40 segundos", "D": "30 segundos" },
+      "correct": "B",
+      "explanation": "La Spike explota a los 45 segundos de ser plantada. El tiempo de defuse es 7 segundos (3.5 con Kit)."
+    },
+    {
+      "id": 22,
+      "difficulty": 6,
+      "category": "economy",
+      "question": "¿Cuántos créditos otorga el bono de victoria de ronda en Valorant?",
+      "options": { "A": "2000", "B": "2700", "C": "3000", "D": "3200" },
+      "correct": "C",
+      "explanation": "La victoria de ronda da 3000 créditos base. La derrota da entre 1900 y 2900 dependiendo de las derrotas consecutivas."
+    },
+    {
+      "id": 23,
+      "difficulty": 6,
+      "category": "maps",
+      "question": "¿Qué mapa fue removido de la rotación competitiva en 2024 por rediseño?",
+      "options": { "A": "Fracture", "B": "Breeze", "C": "Split", "D": "Icebox" },
+      "correct": "A",
+      "explanation": "Fracture fue removido de la rotación por un rediseño completo. Su concepto de ataque desde ambos lados lo hacía difícil de equilibrar."
+    },
+    {
+      "id": 24,
+      "difficulty": 6,
+      "category": "mechanics",
+      "question": "¿Qué significa 'eco round' en Valorant?",
+      "options": { "A": "Comprar solo pistola", "B": "No comprar nada y guardar créditos", "C": "Usar solo habilidades", "D": "Rush al sitio sin parar" },
+      "correct": "B",
+      "explanation": "Eco round es cuando el equipo ahorra deliberadamente, comprando poco o nada, para tener full buy en la próxima ronda."
+    },
+    {
+      "id": 25,
+      "difficulty": 7,
+      "category": "agents",
+      "question": "¿Cuántos puntos de ultimate necesita KAY/O para activar NULL/cmd?",
+      "options": { "A": "6", "B": "7", "C": "8", "D": "9" },
+      "correct": "C",
+      "explanation": "NULL/cmd (el ultimate de KAY/O) requiere 8 puntos de ultimate. Suprime habilidades enemigas en radio de pulso."
+    },
+    {
+      "id": 26,
+      "difficulty": 7,
+      "category": "mechanics",
+      "question": "¿Qué es el 'jiggle peek' en Valorant?",
+      "options": { "A": "Saltar para ver por encima de una pared", "B": "Asomarse brevemente para revelar la posición enemiga", "C": "Hacer shoulder peek para provocar al enemigo", "D": "Usar un molotov para forzar movimiento" },
+      "correct": "B",
+      "explanation": "El jiggle peek consiste en asomarse brevemente a una esquina para obtener información o hacer que el rival haga pre-aim."
+    },
+    {
+      "id": 27,
+      "difficulty": 7,
+      "category": "economy",
+      "question": "¿Cuántos créditos cuesta el Operator (AWP de Valorant)?",
+      "options": { "A": "4500", "B": "4700", "C": "5000", "D": "4200" },
+      "correct": "B",
+      "explanation": "El Operator cuesta 4700 créditos, siendo el arma más cara del juego y la única sniper de un solo disparo letal al cuerpo."
+    },
+    {
+      "id": 28,
+      "difficulty": 7,
+      "category": "maps",
+      "question": "¿Qué mapa de Valorant tiene un puente central que conecta los dos mid-sites?",
+      "options": { "A": "Ascent", "B": "Split", "C": "Bind", "D": "Pearl" },
+      "correct": "A",
+      "explanation": "Ascent tiene un mid con puente retráctil que los equipos pueden controlar para negar paso o flanquear."
+    },
+    {
+      "id": 29,
+      "difficulty": 8,
+      "category": "mechanics",
+      "question": "¿Qué pasa si un agente con la habilidad de Reyna 'Devour' activa dismiss en la orbe de soul?",
+      "options": { "A": "Se cura y queda invulnerable", "B": "Se hace etéreo y se mueve rápido", "C": "Cura a un aliado cercano", "D": "Explota la orbe dañando al rival" },
+      "correct": "B",
+      "explanation": "Dismiss consume la orbe de soul para volverse etéreo (invulnerable pero sin poder disparar) durante 2 segundos."
+    },
+    {
+      "id": 30,
+      "difficulty": 8,
+      "category": "agents",
+      "question": "¿Qué agente duelist fue añadido al juego como el número 25?",
+      "options": { "A": "Iso", "B": "Deadlock", "C": "Gekko", "D": "Fade" },
+      "correct": "A",
+      "explanation": "Iso fue el agente número 25, añadido en octubre 2023 como duelist chino con mecánica de scudo y duelo 1v1."
+    },
+    {
+      "id": 31,
+      "difficulty": 8,
+      "category": "VCT",
+      "question": "¿Qué equipo ganó VCT Champions 2023 en Los Ángeles?",
+      "options": { "A": "Paper Rex", "B": "LOUD", "C": "Evil Geniuses", "D": "FNATIC" },
+      "correct": "C",
+      "explanation": "Evil Geniuses (EG) ganó VCT Champions 2023, siendo el primer equipo norteamericano en ganar un Champions."
+    },
+    {
+      "id": 32,
+      "difficulty": 8,
+      "category": "VCT",
+      "question": "¿Qué equipo ganó VCT Champions 2024 en Seoul?",
+      "options": { "A": "Team Liquid", "B": "Edward Gaming", "C": "Sentinels", "D": "Gen.G" },
+      "correct": "B",
+      "explanation": "Edward Gaming (EDG) ganó VCT Champions 2024 en Seoul, siendo el primer equipo chino en ganar el mundial de Valorant."
+    },
+    {
+      "id": 33,
+      "difficulty": 9,
+      "category": "VCT_LATAM",
+      "question": "¿Cuál fue el primer equipo de América Latina en clasificar a un VCT Masters internacional?",
+      "options": { "A": "Leviatán", "B": "MIBR", "C": "KRÜ Esports", "D": "Furious Gaming" },
+      "correct": "C",
+      "explanation": "KRÜ Esports fue el primer equipo latinoamericano en clasificar y competir en VCT Masters, representando la región LATAM Sur."
+    },
+    {
+      "id": 34,
+      "difficulty": 9,
+      "category": "VCT_LATAM",
+      "question": "¿De qué país es originario el equipo Leviatán?",
+      "options": { "A": "Argentina", "B": "Brasil", "C": "Chile", "D": "México" },
+      "correct": "C",
+      "explanation": "Leviatán es un equipo chileno, parte de VCT Americas como uno de los equipos partnered de LATAM."
+    },
+    {
+      "id": 35,
+      "difficulty": 9,
+      "category": "VCT",
+      "question": "¿En qué año se lanzó oficialmente Valorant al público?",
+      "options": { "A": "2019", "B": "2020", "C": "2021", "D": "2022" },
+      "correct": "B",
+      "explanation": "Valorant fue lanzado el 2 de junio de 2020, después de una beta cerrada que comenzó en abril de ese año."
+    },
+    {
+      "id": 36,
+      "difficulty": 9,
+      "category": "VCT",
+      "question": "¿Cómo se llama el formato de liga permanente de VCT introducido en 2023?",
+      "options": { "A": "VCT Open", "B": "VCT Challengers", "C": "Franchising / Partnered Teams", "D": "VCT Premier" },
+      "correct": "C",
+      "explanation": "En 2023 Riot introdujo el modelo de franchising con equipos partnered permanentes en Americas, EMEA y Pacific."
+    },
+    {
+      "id": 37,
+      "difficulty": 10,
+      "category": "VCT_LATAM",
+      "question": "¿Qué jugador de KRÜ Esports fue considerado uno de los mejores Initiators de LATAM en 2023?",
+      "options": { "A": "Mazino", "B": "Klaus", "C": "Keznit", "D": "Melser" },
+      "correct": "C",
+      "explanation": "Keznit fue ampliamente reconocido como uno de los mejores jugadores de LATAM, conocido por su Jett y más tarde Neon en torneos internacionales."
+    },
+    {
+      "id": 38,
+      "difficulty": 10,
+      "category": "pros",
+      "question": "¿Qué jugador es conocido como 'yay' y fue considerado el mejor jugador del mundo en 2022?",
+      "options": { "A": "TenZ", "B": "Aspas", "C": "yay", "D": "Derke" },
+      "correct": "C",
+      "explanation": "Jaccob 'yay' Whiteaker ganó el VCT Champions 2022 con OpTic Gaming y fue votado mejor jugador del mundo ese año."
+    },
+    {
+      "id": 39,
+      "difficulty": 10,
+      "category": "VCT_LATAM",
+      "question": "¿Qué equipo brasileño representó a América Latina en VCT Champions 2022, llegando a semifinales?",
+      "options": { "A": "FURIA", "B": "LOUD", "C": "MIBR", "D": "2Game" },
+      "correct": "B",
+      "explanation": "LOUD llegó a la gran final de VCT Champions 2022 en Istanbul, perdiendo ante OpTic Gaming en una serie épica."
+    },
+    {
+      "id": 40,
+      "difficulty": 10,
+      "category": "VCT",
+      "question": "¿Cuántos equipos participan en cada liga regional partnered de VCT (Americas, EMEA, Pacific)?",
+      "options": { "A": "8", "B": "10", "C": "12", "D": "14" },
+      "correct": "B",
+      "explanation": "Cada liga regional tiene 10 equipos partnered. En Americas: Sentinels, 100T, NRG, C9, EG, Leviatán, KRÜ, MIBR, 2Game, Furia."
+    },
+    {
+      "id": 41,
+      "difficulty": 11,
+      "category": "VCT_LATAM",
+      "question": "¿Cuál es el nombre del IGL (In-Game Leader) histórico de KRÜ Esports en su etapa más exitosa?",
+      "options": { "A": "Klaus", "B": "NagZ", "C": "Br1", "D": "Shyy" },
+      "correct": "A",
+      "explanation": "Klaus fue el cerebro estratégico de KRÜ Esports durante sus mejores resultados en VCT 2021-2022."
+    },
+    {
+      "id": 42,
+      "difficulty": 11,
+      "category": "VCT",
+      "question": "¿En qué ciudad se realizó VCT Champions 2022?",
+      "options": { "A": "Los Ángeles", "B": "Istanbul", "C": "Berlín", "D": "Seoul" },
+      "correct": "B",
+      "explanation": "VCT Champions 2022 se realizó en Istanbul, Turquía. OpTic Gaming venció a LOUD en la gran final."
+    },
+    {
+      "id": 43,
+      "difficulty": 11,
+      "category": "pros",
+      "question": "¿Qué agente es el más asociado con el jugador brasileño Aspas de LOUD/Leviatán?",
+      "options": { "A": "Jett", "B": "Neon", "C": "Raze", "D": "Reyna" },
+      "correct": "C",
+      "explanation": "Aspas es mundialmente reconocido por su Raze y Jett. Su Raze es considerada de las mejores del mundo, especialmente en Pearl y Bind."
+    },
+    {
+      "id": 44,
+      "difficulty": 12,
+      "category": "VCT",
+      "question": "¿Qué equipo ganó VCT Masters Reykjavik 2022, el primer Masters presencial post-pandemia?",
+      "options": { "A": "Loud", "B": "OpTic Gaming", "C": "FPX", "D": "DRX" },
+      "correct": "B",
+      "explanation": "OpTic Gaming dominó VCT Masters Reykjavik 2022, estableciéndose como el mejor equipo del mundo en esa época."
+    },
+    {
+      "id": 45,
+      "difficulty": 12,
+      "category": "VCT_LATAM",
+      "question": "¿Qué jugador de Leviatán fue MVP de VCT Americas 2023?",
+      "options": { "A": "Aspas", "B": "Mazino", "C": "Shyy", "D": "kiNgg" },
+      "correct": "D",
+      "explanation": "kiNgg fue reconocido como uno de los mejores jugadores de Leviatán en su primer año de franchising, destacando en el rol de IGL/Initiator."
+    },
+    {
+      "id": 46,
+      "difficulty": 12,
+      "category": "pros",
+      "question": "¿Con qué equipo ganó TenZ el VCT Stage 2 Masters Reykjavik 2021?",
+      "options": { "A": "Team SoloMid", "B": "Cloud9 Blue", "C": "Sentinels", "D": "100 Thieves" },
+      "correct": "C",
+      "explanation": "Sentinels, con TenZ como estrella, dominó VCT Stage 2 Masters Reykjavik 2021 en una actuación histórica."
+    },
+    {
+      "id": 47,
+      "difficulty": 13,
+      "category": "VCT",
+      "question": "¿Cuántos mapas se juegan en una serie Best of 5 de la gran final de VCT Champions?",
+      "options": { "A": "3", "B": "5", "C": "Máximo 5", "D": "Siempre 5" },
+      "correct": "C",
+      "explanation": "Una serie Best of 5 se juega hasta 3 victorias: el máximo son 5 mapas pero puede terminar en 3 o 4 si un equipo gana antes."
+    },
+    {
+      "id": 48,
+      "difficulty": 13,
+      "category": "VCT_LATAM",
+      "question": "¿Qué equipo de LATAM Norte compite en VCT Americas bajo la bandera de México?",
+      "options": { "A": "KRÜ Esports", "B": "2Game Esports", "C": "Loud", "D": "Team Liquid" },
+      "correct": "B",
+      "explanation": "2Game Esports es el equipo partnered de VCT Americas con mayor representación de jugadores mexicanos de LATAM Norte."
+    },
+    {
+      "id": 49,
+      "difficulty": 13,
+      "category": "pros",
+      "question": "¿Qué apodo tiene el jugador Gustavo Rossi, estrella de LOUD y Leviatán?",
+      "options": { "A": "s1mple", "B": "Aspas", "C": "Pancada", "D": "Less" },
+      "correct": "B",
+      "explanation": "Gustavo 'Aspas' Rossi es considerado el mejor jugador de Valorant de Brasil y uno de los mejores del mundo."
+    },
+    {
+      "id": 50,
+      "difficulty": 14,
+      "category": "VCT",
+      "question": "¿En qué año se realizó el primer VCT Champions, el mundial de Valorant?",
+      "options": { "A": "2020", "B": "2021", "C": "2022", "D": "2023" },
+      "correct": "B",
+      "explanation": "VCT Champions 2021 fue el primer mundial de Valorant, realizado en Berlín. Acend ganó derrotando a Gambit en la final."
+    },
+    {
+      "id": 51,
+      "difficulty": 14,
+      "category": "VCT_LATAM",
+      "question": "¿Qué jugador argentino de FURIA Esports es reconocido por su Jett y Neon en VCT Americas?",
+      "options": { "A": "pAura", "B": "mwzera", "C": "Havoc", "D": "Quick" },
+      "correct": "A",
+      "explanation": "pAura (Pablo Ferreira) es el representante argentino de FURIA, conocido por su dueling y mecánicas en agentes móviles."
+    },
+    {
+      "id": 52,
+      "difficulty": 14,
+      "category": "VCT",
+      "question": "¿Cuántos mapas tiene la rotación competitiva estándar de Valorant a principios de 2026?",
+      "options": { "A": "7", "B": "8", "C": "9", "D": "10" },
+      "correct": "B",
+      "explanation": "A principios de 2026, la rotación competitiva incluye 8 mapas. La cantidad varía con cada Act cuando se agregan o retiran mapas."
+    },
+    {
+      "id": 53,
+      "difficulty": 15,
+      "category": "VCT_LATAM",
+      "question": "¿Cuál fue el resultado de KRÜ Esports en VCT Champions 2021, su debut mundial?",
+      "options": { "A": "Eliminados en grupos", "B": "Top 8", "C": "Top 4 / Semifinal", "D": "Finalistas" },
+      "correct": "C",
+      "explanation": "KRÜ llegó a semifinales de VCT Champions 2021, un resultado histórico para LATAM que demostró el nivel de la región."
+    },
+    {
+      "id": 54,
+      "difficulty": 15,
+      "category": "pros",
+      "question": "¿Qué jugador europeo tiene el récord de más kills en un solo mapa en un VCT Champions?",
+      "options": { "A": "ScreaM", "B": "Derke", "C": "Alfajer", "D": "cNed" },
+      "correct": "D",
+      "explanation": "cNed (Mehmet Yağız İpek) de Acend fue conocido por sus actuaciones explosivas en VCT Champions 2021, con algunos de los records de kills más altos."
+    },
+    {
+      "id": 55,
+      "difficulty": 15,
+      "category": "VCT",
+      "question": "¿Qué equipo del Pacific ganó VCT Masters Tokyo 2023?",
+      "options": { "A": "Paper Rex", "B": "DRX", "C": "Fnatic", "D": "Evil Geniuses" },
+      "correct": "A",
+      "explanation": "Paper Rex ganó VCT Masters Tokyo 2023 en un torneo memorable, siendo el primer equipo del Pacific en ganar un Masters."
+    }
+  ]
+}

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spike Picante — Panel de Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #000000;
+      --surface: #111111;
+      --border:  rgba(255,255,255,0.08);
+      --text:    #ededed;
+      --muted:   #666666;
+      --green:   #3fb950;
+      --red:     #f55;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Geist', 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      min-height: 100vh;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    #app { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; max-width: 1200px; width: 100%; }
+    @media (max-width: 900px) { #app { grid-template-columns: 1fr 1fr; } }
+
+    /* ── Secciones ───────────────────────────────────────────────────── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Botones ─────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 5px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.28); }
+    .btn:active { transform: scale(0.97); }
+
+    /* Primary — blanco sobre negro */
+    .btn-cyan {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 600;
+    }
+    .btn-cyan:hover { background: #e0e0e0; border-color: #e0e0e0; }
+
+    /* Positivo — verde sutil */
+    .btn-green {
+      background: transparent;
+      border-color: rgba(63,185,80,0.35);
+      color: #3fb950;
+    }
+    .btn-green:hover { background: rgba(63,185,80,0.08); border-color: #3fb950; }
+
+    /* Neutral bright */
+    .btn-gold {
+      background: transparent;
+      border-color: rgba(255,255,255,0.25);
+      color: #ededed;
+    }
+    .btn-gold:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.45); }
+
+    /* Peligro */
+    .btn-red, .btn-danger {
+      background: transparent;
+      border-color: rgba(244,68,68,0.35);
+      color: #f55;
+    }
+    .btn-red:hover, .btn-danger:hover { background: rgba(244,68,68,0.08); border-color: #f55; }
+
+    .btn:disabled { opacity: 0.28; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Grupos de botones ───────────────────────────────────────────── */
+    .btn-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .btn-group.col { flex-direction: column; }
+
+    /* ── Inputs ──────────────────────────────────────────────────────── */
+    input[type="text"], input[type="number"] {
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      padding: 5px 9px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: rgba(255,255,255,0.35);
+    }
+    label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
+    .field { margin-bottom: 8px; }
+
+    /* ── Estado de conexión ──────────────────────────────────────────── */
+    #status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #444;
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    #status-dot.connected { background: var(--green); }
+
+    /* ── Jugador activo display ──────────────────────────────────────── */
+    #active-player-display {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      min-height: 20px;
+    }
+
+    /* ── Total picantes display ──────────────────────────────────────── */
+    #pts-display {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      margin: 6px 0;
+      letter-spacing: -0.04em;
+    }
+    #pts-display::after { content: ' 🌶️'; font-size: 20px; }
+
+    /* ── Log de eventos ──────────────────────────────────────────────── */
+    #event-log {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 8px;
+      font-family: 'Geist Mono', 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      color: #ededed;
+      height: 140px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ── Lock buttons ────────────────────────────────────────────────── */
+    .lock-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+    /* ── Lifelines ───────────────────────────────────────────────────── */
+    .lifeline-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+
+    /* ── Full-width section ──────────────────────────────────────────── */
+    .full-width { grid-column: 1 / -1; }
+
+    /* ── Mini host preview (trivia card) ─────────────────────────────── */
+    #trivia-mini { margin-bottom: 8px; display: none; }
+    #mini-question {
+      font-size: 11px;
+      color: rgba(237,237,237,0.65);
+      line-height: 1.4;
+      margin-bottom: 5px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #mini-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .mini-opt {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 7px;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      background: #000;
+      font-size: 11px;
+      color: rgba(237,237,237,0.35);
+      overflow: hidden;
+    }
+    .mini-opt.is-correct {
+      border-color: rgba(63,185,80,0.45);
+      color: #3fb950;
+      background: rgba(63,185,80,0.07);
+    }
+    .mini-opt.is-locked {
+      border-color: rgba(255,255,255,0.4);
+      color: #fff;
+      background: rgba(255,255,255,0.06);
+    }
+    .mini-opt.is-correct.is-locked {
+      border-color: rgba(63,185,80,0.8);
+      background: rgba(63,185,80,0.14);
+    }
+    .mini-letter { font-weight: 700; font-size: 10px; flex-shrink: 0; opacity: 0.6; }
+    .mini-opt.is-correct .mini-letter,
+    .mini-opt.is-locked  .mini-letter { opacity: 1; }
+    .mini-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<div id="status-bar">
+  <div id="status-dot"></div>
+  <span id="status-text">Conectando a Streamer.bot...</span>
+</div>
+
+<div id="app">
+
+  <!-- ── Show Flow ─────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🎬 Show Flow</div>
+
+    <div class="field">
+      <label>Jugador activo de sesión</label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="player-input" placeholder="nick_del_invitado">
+        <button class="btn btn-cyan" id="btn-set-player" style="white-space:nowrap">Setear</button>
+      </div>
+      <div id="active-player-display">— ninguno —</div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-green" id="btn-show-start">▶ Start Show</button>
+      <button class="btn btn-danger" id="btn-show-stop">■ Stop Show</button>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn" id="btn-scene-trivia">→ Trivia</button>
+      <button class="btn" id="btn-scene-hottake">→ Hot Take</button>
+      <button class="btn" id="btn-scene-hostsolo">→ Host Solo</button>
+      <button class="btn" id="btn-scene-brb">→ BRB</button>
+      <button class="btn" id="btn-discord-golive">📢 Discord Live</button>
+    </div>
+
+    <div class="btn-group" style="margin-top:4px">
+      <button class="btn btn-red" id="btn-mood-picante">🌶️ Picante</button>
+      <button class="btn" id="btn-mood-chill">❄️ Chill</button>
+      <button class="btn btn-danger" id="btn-mood-redalert">🚨 Red Alert</button>
+    </div>
+  </div>
+
+  <!-- ── Timer ──────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">⏱ Timer</div>
+    <div id="timer-display" style="font-size:36px;font-weight:900;text-align:center;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-0.04em;margin-bottom:8px;">30</div>
+    <div class="btn-group" style="margin-bottom:6px">
+      <button class="btn btn-green" id="btn-timer-start">▶ Start</button>
+      <button class="btn btn-danger" id="btn-timer-stop">⏸ Stop</button>
+      <button class="btn" id="btn-timer-reset">↺ Reset</button>
+    </div>
+    <div class="btn-group" style="margin-bottom:4px">
+      <button class="btn" data-timer-delta="5">+5</button>
+      <button class="btn" data-timer-delta="10">+10</button>
+      <button class="btn" data-timer-delta="20">+20</button>
+      <button class="btn" data-timer-delta="30">+30</button>
+    </div>
+    <div class="btn-group">
+      <button class="btn" data-timer-delta="-5">-5</button>
+      <button class="btn" data-timer-delta="-10">-10</button>
+      <button class="btn" data-timer-delta="-20">-20</button>
+      <button class="btn" data-timer-delta="-30">-30</button>
+    </div>
+  </div>
+
+  <!-- ── Trivia ─────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🧠 Trivia</div>
+
+    <div class="btn-group">
+      <button class="btn btn-cyan" id="btn-trivia-start">🎮 Start Game</button>
+      <button class="btn" id="btn-trivia-next">▶ Next Question</button>
+    </div>
+
+    <div id="trivia-mini">
+      <div id="mini-question"></div>
+      <div id="mini-opts">
+        <div class="mini-opt" id="mini-A"><span class="mini-letter">A</span><span class="mini-text"></span></div>
+        <div class="mini-opt" id="mini-B"><span class="mini-letter">B</span><span class="mini-text"></span></div>
+        <div class="mini-opt" id="mini-C"><span class="mini-letter">C</span><span class="mini-text"></span></div>
+        <div class="mini-opt" id="mini-D"><span class="mini-letter">D</span><span class="mini-text"></span></div>
+      </div>
+    </div>
+
+    <label style="margin-bottom:4px">Lock respuesta</label>
+    <div class="lock-btns" style="margin-bottom:8px">
+      <button class="btn" data-letter="A">Lock A</button>
+      <button class="btn" data-letter="B">Lock B</button>
+      <button class="btn" data-letter="C">Lock C</button>
+      <button class="btn" data-letter="D">Lock D</button>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-gold" id="btn-trivia-reveal">✔ Reveal</button>
+      <button class="btn btn-danger" id="btn-trivia-walkaway">🚶 Walk Away</button>
+      <button class="btn btn-danger" id="btn-trivia-gameover">💀 Game Over</button>
+    </div>
+
+    <label style="margin-bottom:4px">Lifelines</label>
+    <div class="lifeline-group">
+      <button class="btn" id="btn-life-5050">50:50</button>
+      <button class="btn" id="btn-life-audience">👥 Público</button>
+      <button class="btn" id="btn-life-phone">📞 Llamada</button>
+    </div>
+  </div>
+
+  <!-- ── Picantes ───────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🌶️ Picantes</div>
+
+    <div id="pts-display">0</div>
+
+    <div id="quick-target-label" style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:6px;">
+      — setear jugador activo primero —
+    </div>
+
+    <div class="btn-group" style="justify-content:center">
+      <button class="btn btn-green" data-amount="1" disabled>+1</button>
+      <button class="btn btn-green" data-amount="5" disabled>+5</button>
+      <button class="btn btn-green" data-amount="10" disabled>+10</button>
+      <button class="btn btn-red" data-amount="-1" disabled>-1</button>
+      <button class="btn btn-red" data-amount="-5" disabled>-5</button>
+      <button class="btn" data-amount="0" disabled>RESET</button>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn" id="btn-broadcast-lb">📊 Broadcast LB</button>
+    </div>
+
+    <div class="field">
+      <label>Ajustar puntos a otro usuario</label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" id="award-user-input" placeholder="usuario">
+        <input type="number" id="award-amount-input" placeholder="pts" style="width:70px">
+        <button class="btn btn-gold" id="btn-award-manual">✔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Wheel ──────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🎡 Ruleta</div>
+    <div class="field">
+      <label>Cantidad de picks (1-5)</label>
+      <input type="number" id="wheel-count" value="1" min="1" max="5">
+    </div>
+    <button class="btn btn-gold" id="btn-wheel-spin" style="margin-bottom:10px">🎡 Girar ruleta</button>
+
+    <div class="section-title" style="margin-top:6px">Opciones personalizadas</div>
+    <div class="field" style="display:flex;gap:6px">
+      <input type="text" id="wheel-opt-input" placeholder="nombre o agente">
+      <button class="btn btn-cyan" id="btn-wheel-add-opt" style="white-space:nowrap">+ Agregar</button>
+    </div>
+    <ul id="wheel-opt-list" style="list-style:none;margin-bottom:8px;max-height:120px;overflow-y:auto;font-size:11px;color:var(--text)"></ul>
+    <div class="btn-group">
+      <button class="btn btn-green" id="btn-wheel-save-opts">💾 Guardar en SB</button>
+      <button class="btn btn-danger" id="btn-wheel-reset-opts">↺ Usar agentes default</button>
+    </div>
+  </div>
+
+  <!-- ── Overlays ───────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">👁️ Overlays (toggle)</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Nombre del source OBS → toggle visible/oculto en escena activa</div>
+    <div id="overlay-toggles" class="btn-group col"></div>
+    <div class="field" style="display:flex;gap:6px;margin-top:8px">
+      <input type="text" id="overlay-source-input" placeholder="Source OBS">
+      <button class="btn btn-cyan" id="btn-overlay-add" style="white-space:nowrap">+ Agregar</button>
+    </div>
+  </div>
+
+  <!-- ── Vote ───────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">📊 Votación</div>
+    <div class="field">
+      <label>Opciones (separadas por |)</label>
+      <input type="text" id="vote-options-input" placeholder="opción1|opción2|opción3">
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-green" id="btn-vote-open">▶ Abrir</button>
+      <button class="btn btn-red" id="btn-vote-close">■ Cerrar</button>
+    </div>
+  </div>
+
+  <!-- ── Event Log (full width) ─────────────────────────────────── -->
+  <div class="section full-width">
+    <div class="section-title">📋 Eventos recibidos</div>
+    <pre id="event-log">— esperando eventos —</pre>
+  </div>
+
+</div><!-- /#app -->
+
+<script src="../overlays/vendor/streamerbot-client.js"></script>
+<script>
+/* ── Estado local ──────────────────────────────────────────────────── */
+var activePlayer = '';
+var currentPts   = 0;
+var miniCorrect  = null;
+var miniLocked   = null;
+
+/* ── Helpers UI ────────────────────────────────────────────────────── */
+function setStatus(connected, msg) {
+  document.getElementById('status-dot').className = connected ? 'connected' : '';
+  document.getElementById('status-text').textContent = msg;
+}
+
+function logEvent(data) {
+  var log = document.getElementById('event-log');
+  var ts  = new Date().toLocaleTimeString('es-AR', { hour12: false });
+  var line = '[' + ts + '] ' + (typeof data === 'string' ? data : JSON.stringify(data)) + '\n';
+  log.textContent = line + log.textContent;
+  if (log.textContent.length > 6000) {
+    log.textContent = log.textContent.substring(0, 6000);
+  }
+}
+
+function updatePtsDisplay(pts) {
+  currentPts = pts;
+  document.getElementById('pts-display').textContent = pts.toLocaleString('es-ES');
+}
+
+function setActivePlayer(name) {
+  activePlayer = name.toLowerCase();
+  document.getElementById('active-player-display').textContent = '🎮 ' + activePlayer;
+  document.getElementById('quick-target-label').textContent = '→ ' + activePlayer;
+  document.querySelectorAll('[data-amount]').forEach(function (b) { b.disabled = false; });
+}
+
+/* ── Mini trivia preview ───────────────────────────────────────────── */
+function triviaShowMini(payload) {
+  miniCorrect = payload.correct || null;
+  miniLocked  = null;
+  document.getElementById('mini-question').textContent = payload.question || '';
+  ['A','B','C','D'].forEach(function (l) {
+    var el = document.getElementById('mini-' + l);
+    el.querySelector('.mini-text').textContent = (payload.options && payload.options[l]) || '';
+    el.className = 'mini-opt' + (l === miniCorrect ? ' is-correct' : '');
+  });
+  document.getElementById('trivia-mini').style.display = 'block';
+}
+
+function triviaLockMini(letter) {
+  if (!letter) return;
+  miniLocked = letter.toUpperCase();
+  ['A','B','C','D'].forEach(function (l) {
+    var el = document.getElementById('mini-' + l);
+    var cls = 'mini-opt';
+    if (l === miniCorrect) cls += ' is-correct';
+    if (l === miniLocked)  cls += ' is-locked';
+    el.className = cls;
+  });
+}
+
+function triviaHideMini() {
+  document.getElementById('trivia-mini').style.display = 'none';
+  miniCorrect = null;
+  miniLocked  = null;
+}
+
+/* ── Inicializar cliente ───────────────────────────────────────────── */
+var sb = new StreamerbotClient({
+  host: '127.0.0.1',
+  port: 8080,
+  password: null,
+  autoSubscribe: { General: ['Custom'] },
+  onConnect: function () {
+    setStatus(true, 'Conectado a Streamer.bot ✓');
+    logEvent('--- Conectado ---');
+  },
+  onDisconnect: function () {
+    setStatus(false, 'Desconectado — reconectando...');
+    logEvent('--- Desconectado ---');
+  },
+});
+
+/* Escuchar eventos para sincronizar estado */
+sb.on('General.Custom', function (msg) {
+  var data = msg.data;
+  if (!data || !data.event) return;
+  logEvent(data);
+
+  switch (data.event) {
+    case 'trivia.host_question':
+      triviaShowMini(data.payload || {});
+      break;
+    case 'trivia.lock_answer':
+      triviaLockMini(data.payload && data.payload.letter);
+      break;
+    case 'trivia.game_over':
+      triviaHideMini();
+      break;
+    case 'picantes.quick_change':
+      if (data.payload && activePlayer &&
+          data.payload.player === activePlayer) {
+        updatePtsDisplay(data.payload.total);
+      }
+      break;
+    case 'picantes.leaderboard_update':
+      if (data.payload && activePlayer) {
+        var found = (data.payload.players || []).find(function (p) {
+          return p.name === activePlayer;
+        });
+        if (found) updatePtsDisplay(found.points);
+      }
+      break;
+  }
+});
+
+/* ── Acciones ──────────────────────────────────────────────────────── */
+function call(name, args) {
+  sb.doAction({ name: name }, args || {});
+  logEvent('→ ' + name + ' ' + JSON.stringify(args || {}));
+}
+
+/* Show Flow */
+document.getElementById('btn-set-player').onclick = function () {
+  var val = document.getElementById('player-input').value.trim();
+  if (!val) return;
+  setActivePlayer(val);
+  updatePtsDisplay(0);
+  call('Show.SetActivePlayer', { player: val });
+};
+document.getElementById('btn-show-start').onclick    = function () { call('Show.Start'); };
+document.getElementById('btn-show-stop').onclick     = function () { call('Show.Stop'); };
+document.getElementById('btn-scene-trivia').onclick  = function () { call('Show.SwitchScene.Trivia'); };
+document.getElementById('btn-scene-hottake').onclick = function () { call('Show.SwitchScene.HotTake'); };
+document.getElementById('btn-scene-hostsolo').onclick = function () { call('Show.SwitchScene.HostSolo'); };
+document.getElementById('btn-scene-brb').onclick      = function () { call('Show.SwitchScene.BRB'); };
+document.getElementById('btn-discord-golive').onclick = function () { call('Infra.Discord.PostGoLive'); };
+
+/* Trivia */
+document.getElementById('btn-trivia-start').onclick    = function () { call('Trivia.Start', activePlayer ? { playerName: activePlayer } : {}); };
+document.getElementById('btn-trivia-next').onclick     = function () { call('Trivia.NextQuestion'); };
+document.getElementById('btn-trivia-reveal').onclick   = function () { call('Trivia.RevealAnswer'); };
+document.getElementById('btn-trivia-walkaway').onclick = function () { call('Trivia.WalkAway'); };
+document.getElementById('btn-trivia-gameover').onclick = function () { call('Trivia.GameOver'); };
+document.getElementById('btn-life-5050').onclick    = function () { call('Trivia.Lifeline.FiftyFifty'); };
+document.getElementById('btn-life-audience').onclick = function () { call('Trivia.Lifeline.AskAudience'); };
+document.getElementById('btn-life-phone').onclick    = function () { call('Trivia.Lifeline.PhoneFriend'); };
+
+document.querySelectorAll('[data-letter]').forEach(function (btn) {
+  btn.onclick = function () {
+    triviaLockMini(btn.dataset.letter);
+    call('Trivia.LockAnswer', { letter: btn.dataset.letter });
+  };
+});
+
+/* Timer */
+var timerSeconds = 30;
+function updateTimerDisplay() {
+  document.getElementById('timer-display').textContent = timerSeconds;
+}
+document.getElementById('btn-timer-start').onclick = function () { call('Timer.Start'); };
+document.getElementById('btn-timer-stop').onclick  = function () { call('Timer.Stop'); };
+document.getElementById('btn-timer-reset').onclick = function () {
+  call('Timer.Reset');
+};
+document.querySelectorAll('[data-timer-delta]').forEach(function (btn) {
+  btn.onclick = function () {
+    var delta = parseInt(btn.dataset.timerDelta, 10);
+    timerSeconds = Math.max(5, timerSeconds + delta);
+    updateTimerDisplay();
+    call('Timer.Set', { seconds: timerSeconds });
+  };
+});
+
+/* Picantes — botones de cantidad */
+document.querySelectorAll('[data-amount]').forEach(function (btn) {
+  btn.onclick = function () {
+    var amount = parseInt(btn.dataset.amount, 10);
+    call('Picantes.QuickAward', {
+      amount: String(amount),
+      targetPlayer: activePlayer,
+    });
+  };
+});
+
+document.getElementById('btn-broadcast-lb').onclick = function () {
+  call('Picantes.BroadcastLeaderboard');
+};
+
+document.getElementById('btn-award-manual').onclick = function () {
+  var user   = document.getElementById('award-user-input').value.trim();
+  var amount = document.getElementById('award-amount-input').value.trim();
+  if (!user || !amount) return;
+  call('Picantes.Award', { user: user, amount: amount });
+};
+
+/* Mood */
+document.getElementById('btn-mood-picante').onclick  = function () { call('Mood.Picante'); };
+document.getElementById('btn-mood-chill').onclick    = function () { call('Mood.Chill'); };
+document.getElementById('btn-mood-redalert').onclick = function () { call('Mood.RedAlert'); };
+
+/* Wheel */
+document.getElementById('btn-wheel-spin').onclick = function () {
+  var n = document.getElementById('wheel-count').value || '1';
+  call('Wheel.Spin', { input0: n });
+};
+
+/* ── Wheel opciones personalizadas ─────────────────────────────────── */
+var wheelOpts = JSON.parse(localStorage.getItem('wheelOpts') || '[]');
+
+function renderWheelOpts() {
+  var ul = document.getElementById('wheel-opt-list');
+  ul.innerHTML = '';
+  if (wheelOpts.length === 0) {
+    ul.innerHTML = '<li style="color:var(--muted)">— usando agentes default —</li>';
+    return;
+  }
+  wheelOpts.forEach(function (name, i) {
+    var li = document.createElement('li');
+    li.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid var(--border)';
+    li.innerHTML = '<span>' + name + '</span><button class="btn" style="padding:2px 7px;font-size:10px">✕</button>';
+    li.querySelector('button').onclick = function () {
+      wheelOpts.splice(i, 1);
+      localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
+      renderWheelOpts();
+    };
+    ul.appendChild(li);
+  });
+}
+renderWheelOpts();
+
+document.getElementById('btn-wheel-add-opt').onclick = function () {
+  var val = document.getElementById('wheel-opt-input').value.trim();
+  if (!val) return;
+  wheelOpts.push(val);
+  localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
+  document.getElementById('wheel-opt-input').value = '';
+  renderWheelOpts();
+};
+
+document.getElementById('btn-wheel-save-opts').onclick = function () {
+  var opts = wheelOpts.join(',');
+  call('Wheel.SetOptions', { options: opts });
+};
+
+document.getElementById('btn-wheel-reset-opts').onclick = function () {
+  wheelOpts = [];
+  localStorage.setItem('wheelOpts', JSON.stringify(wheelOpts));
+  renderWheelOpts();
+  call('Wheel.SetOptions', { options: '' });
+};
+
+/* ── Overlays toggle ────────────────────────────────────────────────── */
+var defaultOverlaySources = ['Scoreboard', 'Alerts', 'Wheel'];
+var overlaySources = JSON.parse(localStorage.getItem('overlaySources') || JSON.stringify(defaultOverlaySources));
+
+function renderOverlayToggles() {
+  var container = document.getElementById('overlay-toggles');
+  container.innerHTML = '';
+  overlaySources.forEach(function (src) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;align-items:center';
+    var btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.flex = '1';
+    btn.textContent = '👁️ ' + src;
+    btn.onclick = function () { call('Show.ToggleSource', { source: src }); };
+    var del = document.createElement('button');
+    del.className = 'btn btn-danger';
+    del.style.cssText = 'padding:4px 8px;font-size:10px';
+    del.textContent = '✕';
+    del.onclick = function () {
+      overlaySources = overlaySources.filter(function (s) { return s !== src; });
+      localStorage.setItem('overlaySources', JSON.stringify(overlaySources));
+      renderOverlayToggles();
+    };
+    row.appendChild(btn);
+    row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+renderOverlayToggles();
+
+document.getElementById('btn-overlay-add').onclick = function () {
+  var val = document.getElementById('overlay-source-input').value.trim();
+  if (!val || overlaySources.includes(val)) return;
+  overlaySources.push(val);
+  localStorage.setItem('overlaySources', JSON.stringify(overlaySources));
+  document.getElementById('overlay-source-input').value = '';
+  renderOverlayToggles();
+};
+
+/* Vote */
+document.getElementById('btn-vote-open').onclick = function () {
+  var opts = document.getElementById('vote-options-input').value.trim();
+  if (!opts) return;
+  call('Vote.Open', { options: opts });
+};
+document.getElementById('btn-vote-close').onclick = function () {
+  call('Vote.Close');
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: transparent;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #ededed;
+}
+
+/* ── Contenedor principal ─────────────────────────────────────────────── */
+#scoreboard {
+  width: 380px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(255,255,255,0.55);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+#sb-header {
+  padding: 12px 18px 11px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.sb-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+}
+
+/* ── Lista ────────────────────────────────────────────────────────────── */
+#leaderboard {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Fila de jugador ──────────────────────────────────────────────────── */
+.sb-row {
+  display: grid;
+  grid-template-columns: 26px 8px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  will-change: transform;
+}
+
+.sb-row:last-child { border-bottom: none; }
+
+.sb-row[data-pos="1"] {
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Posición ─────────────────────────────────────────────────────────── */
+.sb-pos {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  text-align: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sb-row[data-pos="1"] .sb-pos { color: #fff; font-size: 13px; }
+.sb-row[data-pos="2"] .sb-pos { color: rgba(255,255,255,0.5); }
+.sb-row[data-pos="3"] .sb-pos { color: rgba(255,255,255,0.35); }
+
+/* ── Tier dot ─────────────────────────────────────────────────────────── */
+.sb-badge {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tier-iron     { background: #444; }
+.tier-bronze   { background: #7a6040; }
+.tier-silver   { background: #888; }
+.tier-gold     { background: #aaa; }
+.tier-platinum { background: #ccc; }
+.tier-radiant  { background: #fff; }
+
+/* ── Nombre ───────────────────────────────────────────────────────────── */
+.sb-name {
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.02em;
+}
+
+.sb-row[data-pos="1"] .sb-name {
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+}
+
+/* ── Puntos ───────────────────────────────────────────────────────────── */
+.sb-pts {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sb-row[data-pos="1"] .sb-pts {
+  color: #fff;
+  font-size: 15px;
+}
+
+.sb-pts::after {
+  content: '🌶';
+  font-size: 10px;
+  opacity: 0.5;
+  margin-left: 3px;
+}
+
+/* ── Quick-change ────────────────────────────────────────────────────── */
+#quick-change {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 48px currentColor;
+  pointer-events: none;
+  z-index: 100;
+  font-variant-numeric: tabular-nums;
+}
+
+#quick-change.plus  { color: rgba(255,255,255,0.95); }
+#quick-change.minus { color: rgba(244,68,68,0.9); }
+#quick-change.reset { color: rgba(255,255,255,0.25); }
+#quick-change.hidden { display: none; }

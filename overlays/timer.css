@@ -1,0 +1,65 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+}
+
+#timer-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#timer-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: rgba(255,255,255,0.07);
+  stroke-width: 8;
+}
+
+.ring {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 339.292;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s linear, stroke 0.3s;
+}
+
+#timer-count {
+  position: relative;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: color 0.3s;
+}
+
+/* Estados de color */
+#timer-wrap.warning .ring      { stroke: rgba(255,255,255,0.65); }
+#timer-wrap.warning #timer-count { color: rgba(255,255,255,0.65); }
+
+#timer-wrap.urgent .ring       { stroke: #f55; }
+#timer-wrap.urgent #timer-count  { color: #f55; }
+
+#timer-wrap.done .ring         { stroke: rgba(244,68,68,0.25); }
+#timer-wrap.done #timer-count    { color: rgba(244,68,68,0.45); }

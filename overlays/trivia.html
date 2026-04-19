@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trivia — Spike Picante</title>
+  <link rel="stylesheet" href="trivia.css">
+</head>
+<body>
+
+<div id="stage" class="hidden">
+
+  <!-- Escalera lateral -->
+  <aside id="ladder"></aside>
+
+  <!-- Tablero central -->
+  <main id="board">
+    <div id="player-banner">
+      <span id="player-name"></span>
+      <span id="winnings-display">0 🌶️</span>
+    </div>
+
+    <div id="difficulty-badge"></div>
+
+    <div id="question-text"></div>
+
+    <div id="options">
+      <button class="opt" data-letter="A">
+        <span class="opt-letter">A</span>
+        <span class="opt-text"></span>
+      </button>
+      <button class="opt" data-letter="B">
+        <span class="opt-letter">B</span>
+        <span class="opt-text"></span>
+      </button>
+      <button class="opt" data-letter="C">
+        <span class="opt-letter">C</span>
+        <span class="opt-text"></span>
+      </button>
+      <button class="opt" data-letter="D">
+        <span class="opt-letter">D</span>
+        <span class="opt-text"></span>
+      </button>
+    </div>
+
+    <div id="lifelines">
+      <div class="lifeline" id="life-5050" data-tip="50:50">
+        <span class="life-icon">½</span>
+        <span class="life-label">50:50</span>
+      </div>
+      <div class="lifeline" id="life-audience" data-tip="Preguntar al público">
+        <span class="life-icon">👥</span>
+        <span class="life-label">Público</span>
+      </div>
+      <div class="lifeline" id="life-phone" data-tip="Llamada a un amigo">
+        <span class="life-icon">📞</span>
+        <span class="life-label">Llamada</span>
+      </div>
+    </div>
+
+    <!-- Barras de audiencia (ocultas por defecto) -->
+    <div id="audience-bars" class="hidden">
+      <div class="abar-row" data-letter="A">
+        <span class="abar-label">A</span>
+        <div class="abar-track"><div class="abar-fill"></div></div>
+        <span class="abar-pct">0%</span>
+      </div>
+      <div class="abar-row" data-letter="B">
+        <span class="abar-label">B</span>
+        <div class="abar-track"><div class="abar-fill"></div></div>
+        <span class="abar-pct">0%</span>
+      </div>
+      <div class="abar-row" data-letter="C">
+        <span class="abar-label">C</span>
+        <div class="abar-track"><div class="abar-fill"></div></div>
+        <span class="abar-pct">0%</span>
+      </div>
+      <div class="abar-row" data-letter="D">
+        <span class="abar-label">D</span>
+        <div class="abar-track"><div class="abar-fill"></div></div>
+        <span class="abar-pct">0%</span>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
+<script src="vendor/streamerbot-client.js"></script>
+<script src="trivia.js"></script>
+</body>
+</html>
